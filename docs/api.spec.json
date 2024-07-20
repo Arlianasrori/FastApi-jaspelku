@@ -1,0 +1,2320 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "JASPELKU FOR USER",
+        "version": "1.0",
+        "description": "Api specification for jaspelku project"
+    },
+    "servers": [
+        {
+            "url": "http:localhost:2008",
+            "description": "development server"
+        }
+    ],
+    "paths": {
+        
+        "tags : user/auth" : true, 
+
+        "/user/register" : {
+            "post" : {
+                "tags": ["user/auth"],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "example" : {
+                                "email" : "habil@gmail.com",
+                                "username" : "habil",
+                                "password" : "habil123"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201" : {
+                        "description": "response if register succes",
+                        "content": {
+                           "application/json" : {
+                                "example" : {
+                                    "msg" : "register success",
+                                    "data" : {
+                                        "id" : "2345",
+                                        "email" : "habil@gmail.com",
+                                        "username" : "habil123",
+                                        "acces_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+                                        "refresh_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                                    }
+                                }
+                           }
+                        }
+                    },
+                    "400" : {
+                        "description": "response if email already exsist",
+                        "content": {
+                           "application/json" : {
+                                "example" : {
+                                    "msg" : "email already exist"
+                                }
+                           }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/login" : {
+            "post" : {
+                "tags": ["user/auth"],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "example" : {
+                                "email" : "habil@gmail.com",
+                                "password" : "habil123"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response if login succes,role on response can use for redirect page user like servant or vendee",
+                        "content": {    
+                           "application/json" : {
+                                "example" : {                                  
+                                    "msg" : "login success",
+                                    "data" : {
+                                             "role" : "servant",
+                                             "acces_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+                                             "refresh_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                                             }
+                                }
+                           }
+                        }
+                    },
+                    "400" : {
+                        "description": "response if email already exsist",
+                        "content": {
+                           "application/json" : {
+                                "example" : {
+                                    "msg" : "email or password wrong"
+                                }
+                           }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/refreshToken" : {
+            "get" : {
+                "tags": ["user/auth"],
+                "parameters": [{
+                    "$ref": "#/components/parameters/Authorization-Header-Refresh-token"
+                }],
+                "responses": {
+                    "200" : {
+                        "description": "response if token is valid",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "login success",
+                                    "data" : {
+                                        "acces_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+                                        "refresh_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                                    }
+                                }
+                        }
+                            }
+                        },
+                    "401" : {
+                        "description": "response if refresh token invalid or expired",
+                        "content": {
+                           "application/json" : {
+                                "example" : {
+                                    "msg" : "unauthorized"
+                                }
+                           }
+                        }
+                    }
+                }
+            }
+        },
+
+        "tags : user/role" : true,
+
+        "/user/role" : {
+            "summary": "update or add role to user",
+            "put" : {
+                "parameters": [{
+                    "$ref": "#/components/parameters/Authorization-Header"
+                }],
+                "tags": ["user/role"],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "examples": {
+                                "servantRole" : {
+                                    "value" : {
+                                        "role" : "servant"
+                                    }
+                                },
+                                "vendeeRole" : {
+                                    "value" : {
+                                        "role" : "vendee"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response if update role user succes",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "update role success",
+                                    "data" : {
+                                        "id" : "2345",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400" : {
+                        "description": "response if role user is exist,one user just can update role only one",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "role user is exist"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+
+        "tags : user/tujuan" : true,
+
+        "/user/tujuan" : {
+            "post" : {
+                "parameters": [{
+                    "$ref": "#/components/parameters/Authorization-Header"
+                }],
+                "tags": ["user/tujuan"],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "example" : {
+                                "id_tujuan" : "2345"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response if add tujuan user succes",
+                        "content": {
+                            "application/json" : {
+                                "examples" : {
+                                    "role_servant" : {
+                                        "value" : {
+                                            "msg" : "add tujuan user success",
+                                            "data" : {
+                                                "id" : "2345",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "detail_servant" : {
+                                                    "id" : "5432",
+                                                    "deksripsi" : "siap membantu",
+                                                    "tujuan_servant" : {
+                                                        "id" : "5431",
+                                                        "tujuan_servant_category" : {
+                                                            "id" : "6789",
+                                                            "isi" : "siap membantu menitip barang",
+                                                            "tujuan_user_category" : {
+                                                                "id" : "4567",
+                                                                "nama" : "menitip"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "role_vendee" : {
+                                        "value" : {
+                                            "msg" : "add tujuan user success",
+                                            "data" : {
+                                                "id" : "2345",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "detail_vendee" : {
+                                                    "id" : "5432",
+                                                    "deksripsi" : "siap membantu",
+                                                    "tujuan_vendee" : {
+                                                        "id" : "5431",
+                                                        "tujuan_vendee_category" : {
+                                                            "id" : "6789",
+                                                            "isi" : "ingin mencari jasa penitipan barang",
+                                                            "tujuan_user_category" : {
+                                                                "id" : "4567",
+                                                                "nama" : "menitip"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404" : {
+                        "description": "response if tujuan is not found",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "tujuan is not found"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        "tags : user/servant/profile" : true,
+
+        "/user/servant/profile" : {
+            "put" : {
+                "tags": ["user/servant/profile"],
+                "parameters": [{
+                    "$ref": "#/components/parameters/Authorization-Header"
+                }],
+                "requestBody" : {
+                    "description": "request body for update profile servant : alamat is optional,deskripsi,jasa/pelayanan is optional,jadwal pelayanan is optional with value all days name,lokasi pelayanan is optional and time is optional",
+                    "content": {
+                        "application/json" : {
+                            "example" : {
+                                "deskripsi" : "siap menjaga rumah",
+                                "alamat" : {
+                                    "latitude" : "192.9878",
+                                    "longtitude" : "-08.9786767"
+                                },
+                                "pelayanan" : {
+                                    "id" : "5432"
+                                },
+                                "jadwal" : [
+                                    {
+                                    "day" : "senin"
+                                    },
+                                    {
+                                    "day" : "selasa"
+                                    },
+                                    {
+                                    "day" : "rabu"
+                                    },
+                                    {
+                                    "day" : "kamis"
+                                    },
+                                    {
+                                    "day" : "jumat"
+                                    }
+                                ],
+                                "time" : {
+                                    "time" : "08.00 - 22.00"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response if update profile succes,this example response return if all body exist",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "alamat" : {
+                                            "village" : "rhee loka",
+                                            "subdistrick" : "rhee",
+                                            "regency" : "sumbawa",
+                                            "province" : "nusa tenggara barat",
+                                            "country" : "indonesia",
+                                            "latitude" : "192.9878",
+                                            "longitude" : "-08.9786767"
+                                        },
+                                        "detail_servant" : {
+                                            "id" : "5678",
+                                            "deksripsi" : "siap menjaga rumah barang",
+                                            "pelayanan" : {
+                                                "id" : "9876",
+                                                "name" : "menjaga rumah"
+                                            },
+                                            "jadwal_pelayanan" : [
+                                                {
+                                                    "id" : "9087",
+                                                    "day" : "senin"
+                                                },
+                                                {
+                                                    "id" : "9087",
+                                                    "day" : "selasa"
+                                                },
+                                                {
+                                                    "id" : "9087",
+                                                    "day" : "rabu"
+                                                },
+                                                {
+                                                    "id" : "9087",
+                                                    "day" : "kamis"
+                                                },
+                                                {
+                                                    "id" : "9087",
+                                                    "day" : "jumat"
+                                                }
+                                            ],
+                                            "time_pelayanan" : {
+                                                "time" : "08.00 - 22.00"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get" : {
+                "tags": ["user/servant/profile"],
+                "parameters": [{
+                    "$ref": "#/components/parameters/Authorization-Header"
+                }],
+                "description": "all profile users",
+                "responses": {
+                    "200" : {
+                        "description": "all profile users",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "alamat" : {
+                                            "village" : "rhee loka",
+                                            "subdistrick" : "rhee",
+                                            "regency" : "sumbawa",
+                                            "province" : "nusa tenggara barat",
+                                            "country" : "indonesia",
+                                            "latitude" : "192.9878",
+                                            "longitude" : "-08.9786767"
+                                        },
+                                        "detail_servant" : {
+                                            "id" : "5678",
+                                            "deksripsi" : "siap menjaga rumah barang",
+                                            "pelayanan" : {
+                                                "id" : "9876",
+                                                "name" : "menjaga rumah"
+                                            },
+                                            "jadwal_pelayanan" : [
+                                                {
+                                                    "id" : "9087",
+                                                    "day" : "senin"
+                                                },
+                                                {
+                                                    "id" : "9087",
+                                                    "day" : "selasa"
+                                                },
+                                                {
+                                                    "id" : "9087",
+                                                    "day" : "rabu"
+                                                },
+                                                {
+                                                    "id" : "9087",
+                                                    "day" : "kamis"
+                                                },
+                                                {
+                                                    "id" : "9087",
+                                                    "day" : "jumat"
+                                                }
+                                            ],
+                                            "time_pelayanan" : {
+                                                "time" : "08.00 - 22.00"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        
+        "/user/servant/profile/detail" : {
+            "get" : {
+                "tags": ["user/servant/profile"],
+                "summary": "get detail profile like rating dll",
+                "parameters": [{
+                    "$ref": "#/components/parameters/Authorization-Header"
+                }],
+                "responses": {
+                    "200" : {
+                        "description": "all profile with rating,statistik penjualan",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "alamat" : {
+                                            "village" : "rhee loka",
+                                            "subdistrick" : "rhee",
+                                            "regency" : "sumbawa",
+                                            "province" : "nusa tenggara barat",
+                                            "country" : "indonesia",
+                                            "latitude" : "192.9878",
+                                            "longitude" : "-08.9786767"
+                                        },
+                                        "detail_servant" : {
+                                            "id" : "5678",
+                                            "deksripsi" : "siap menjaga rumah barang",
+                                            "pelayanan" : {
+                                                "id" : "9876",
+                                                "name" : "menjaga rumah"
+                                            },
+                                            "time_pelayanan" : {
+                                                "time" : "08.00 - 22.00"
+                                            },
+                                            "rating" : "4.5",
+                                            "statistik_penjualan" : {
+                                                "dipesan" : 5,
+                                                "membatalkan" : 1,
+                                                "dibatalkan" : 0,
+                                                "total" : 6
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/servant/profile/detail/ratings" : {
+            "get" : {
+                "tags": ["user/servant/profile"],
+                "parameters": [{
+                    "$ref": "#/components/parameters/Authorization-Header"
+                }],
+                "responses": {
+                    "200" : {
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "succes",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "ratings" : [
+                                            {
+                                                "id" : "3456",
+                                                "rating" : "5.0",
+                                                "isi" : "luar biasa",
+                                                "vendee" : {
+                                                    "id" : "5432",
+                                                    "username" : "habil",
+                                                    "deskripsi" : "sangat luar biasa"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+
+        "tags : user/servant/pesanan" : true,
+
+        "/user/servant/pesanan" : {
+            "get" : {
+                "tags": ["user/servant/pesanan"],
+                "parameters": [
+                    {
+                    "$ref": "#/components/parameters/Authorization-Header"
+                    },
+                    {
+                        "in": "query",
+                        "name": "status_pesanan",
+                        "schema" : {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "selesai" : {
+                                "value" : "selesai"
+                            },
+                            "dibatalkan_vendee" : {
+                                "value" : "dibatalkan_vendee"
+                            },
+                            "dibatalkan_servant" : {
+                                "value" : "dibatalkan_servant"
+                            },
+                            "proses" : {
+                                "value" : "proses"
+                            },
+                            "pengajuan" : {
+                                "value" : "pengajuan"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "content": {
+                            "application/json" : {
+                                "examples" : {
+                                    "selesai" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "pesanans" : [
+                                                    {
+                                                        "id" : "3456",
+                                                        "id_servant" : "5432",
+                                                        "vendee" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                        },
+                                                        "date" : "24-07-2024",
+                                                        "time" : "08.00",
+                                                        "status" : "selesai",
+                                                        "tugas" : "menitip barang",
+                                                        "total_price" : 46000,
+                                                        "price_outside" : null,
+                                                        "other_price" : null,
+                                                        "isPay" : false,
+                                                        "isCOD" : true,
+                                                        "allowCOD" : true,
+                                                        "approved" : true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "dibatalkan_vendee" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "pesanans" : [
+                                                    {
+                                                        "id" : "3456",
+                                                        "id_servant" : "5432",
+                                                        "vendee" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                        },
+                                                        "date" : "24-07-2024",
+                                                        "time" : "08.00",
+                                                        "status" : "dibatalkan_vendee",
+                                                        "tugas" : "menitip barang",
+                                                        "total_price" : 46000,
+                                                        "price_outside" : null,
+                                                        "other_price" : null,
+                                                        "isPay" : false,
+                                                        "isCOD" : true,
+                                                        "allowCOD" : true,
+                                                        "approved" : true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "dibatalkan_servant" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "pesanans" : [
+                                                    {
+                                                        "id" : "3456",
+                                                        "id_servant" : "5432",
+                                                        "vendee" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                        },
+                                                        "date" : "24-07-2024",
+                                                        "time" : "08.00",
+                                                        "status" : "dibatalkan_servant",
+                                                        "tugas" : "menitip barang",
+                                                        "total_price" : 46000,
+                                                        "price_outside" : null,
+                                                        "other_price" : null,
+                                                        "isPay" : false,
+                                                        "isCOD" : true,
+                                                        "allowCOD" : true,
+                                                        "approved" : true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "proses" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "pesanans" : [
+                                                    {
+                                                        "id" : "3456",
+                                                        "vendee" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                        },
+                                                        "date" : "24-07-2024",
+                                                        "time" : "08.00",
+                                                        "status" : "proses",
+                                                        "tugas" : "menitip barang",
+                                                        "total_price" : 46000,
+                                                        "price_outside" : null,
+                                                        "other_price" : null,
+                                                        "isPay" : false,
+                                                        "isCOD" : true,
+                                                        "allowCOD" : true,
+                                                        "approved" : true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "pengajuan" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "pesanans" : [
+                                                    {
+                                                        "id" : "3456",
+                                                        "id_servant" : "5432",
+                                                        "vendee" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                        },
+                                                        "date" : "24-07-2024",
+                                                        "time" : "08.00",
+                                                        "status" : "pengajuan",
+                                                        "tugas" : "menitip barang",
+                                                        "total_price" : 46000,
+                                                        "price_outside" : null,
+                                                        "other_price" : null,
+                                                        "isPay" : false,
+                                                        "isCOD" : true,
+                                                        "allowCOD" : true,
+                                                        "approved" : true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/servant/pesanan/{id_pesanan}" : {
+            "get" : {
+                "tags": ["user/servant/pesanan"],
+                "parameters": [
+                    {
+                    "$ref": "#/components/parameters/Authorization-Header"
+                    },
+                    {
+                        "in": "path",
+                        "name": "id_pesanan",
+                        "schema" : {
+                            "type": "string",
+                            "example" : "5678"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "description": "data pesanans",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "succes",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "pesanans" : [
+                                            {
+                                                "id" : "3456",
+                                                "id_servant" : "5432",
+                                                "vendee" : {
+                                                    "id" : "5432",
+                                                    "username" : "habil",
+                                                    "deskripsi" : "sangat luar biasa"
+                                                },
+                                                "date" : "24-07-2024",
+                                                "time" : "08.00",
+                                                "status" : "selesai",
+                                                "tugas" : "menitip barang",
+                                                "total_price" : 46000,
+                                                "price_outside" : null,
+                                                "other_price" : null,
+                                                "isPay" : false,
+                                                "isCOD" : true,
+                                                "allowCOD" : true,
+                                                "approved" : true
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/servant/pesanan/cancel/{id_pesanan}" : {
+            "put" : {
+                "tags": ["user/servant/pesanan"],
+                "summary": "batalkan pesanan servant",
+                "parameters": [
+                    {
+                    "$ref": "#/components/parameters/Authorization-Header"
+                    },
+                    {
+                        "in": "path",
+                        "name": "id_pesanan",
+                        "schema" : {
+                            "type": "string",
+                            "example" : "5678"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "description": "data pesanans",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "succes",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "pesanans" : {
+                                                "id" : "3456",
+                                                "id_servant" : "5432",
+                                                "vendee" : {
+                                                    "id" : "5432",
+                                                    "username" : "habil",
+                                                    "deskripsi" : "sangat luar biasa"
+                                                },
+                                                "date" : "24-07-2024",
+                                                "time" : "08.00",
+                                                "status" : "dibatalkan_servant",
+                                                "tugas" : "menitip barang",
+                                                "total_price" : 46000,
+                                                "price_outside" : null,
+                                                "other_price" : null,
+                                                "isPay" : false,
+                                                "isCOD" : true,
+                                                "allowCOD" : true,
+                                                "approved" : true
+                                            }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404" : {
+                        "description": "data pesanans",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "pesanan tidak ditemukan"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/servant/pesanan/approved/{id_pesanan}" : {
+            "put" : {
+                "tags": ["user/servant/pesanan"],
+                "summary": "approve pesanan servant",
+                "parameters": [
+                    {
+                    "$ref": "#/components/parameters/Authorization-Header"
+                    },
+                    {
+                        "in": "path",
+                        "name": "id_pesanan",
+                        "schema" : {
+                            "type": "string",
+                            "example" : "5678"
+                        },
+                        "required": true
+                    }
+                ],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "examples" : {                               
+                                "allowCOD" : {
+                                    "value" : {
+                                        "allowCOD" : true
+                                    }
+                                },
+                                "notAllowCOD" : {
+                                    "value" : {
+                                        "allowCOD" : false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "ketika servant telah menyetujui pesanan column approved akan berubah menjadi true,dan menunggu pembayaran dari vendee.setelah pembayaran selsai status pesanan akan berubah menjadi proses",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "succes",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "pesanans" : {
+                                                "id" : "3456",
+                                                "id_servant" : "5432",
+                                                "vendee" : {
+                                                    "id" : "5432",
+                                                    "username" : "habil",
+                                                    "deskripsi" : "sangat luar biasa"
+                                                },
+                                                "date" : "24-07-2024",
+                                                "time" : "08.00",
+                                                "status" : "persetujuan",
+                                                "tugas" : "menitip barang",
+                                                "total_price" : 46000,
+                                                "price_outside" : null,
+                                                "other_price" : null,
+                                                "isPay" : false,
+                                                "isCOD" : true,
+                                                "allowCOD" : true,
+                                                "approved" : true
+                                            }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404" : {
+                        "description": "data pesanans",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "pesanan tidak ditemukan"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+
+        "tags : user/notifikasi" : true,
+
+        "/user/notifikasi" : {
+            "post" : {
+                "tags": ["user/notifikasi"],
+                "parameters": [{
+                    "$ref": "#/components/parameters/Authorization-Header"
+                }],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "examples" : {
+                                "with_pesanan" : {
+                                    "value" : {
+                                            "id_user" : "5432",
+                                            "notifikasi_category_id" : "6789",
+                                            "isi" : "habil baru saja mengajukan pesanan untuk anda",
+                                            "id_pesanan" : "6754"                                      
+                                        }
+                                },
+                                "without_pesanan" : {
+                                    "value" : {
+                                            "id_user" : "5432",
+                                            "notifikasi_category_id" : "6789",
+                                            "isi" : "habil baru saja mengajukan pesanan untuk anda",
+                                            "id_pesanan" : null
+                                    }
+                                }
+                            } 
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response if add notification successs",
+                        "content": {
+                            "application/json" : {
+                                "examples": {
+                                    "with_pesanan" : {
+                                    "value" : {
+                                        "msg" : "succces",
+                                        "data" : {
+                                            "id" : "5432",
+                                            "user" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com"
+                                            },
+                                            "notifikasi_category" : {
+                                                "id" : "6789",
+                                                "name" : "payment/info/rating"
+                                            },
+                                            "isi" : "habil baru saja mengajukan pesanan untuk anda",
+                                            "id_pesanan" : "7890"                                          
+                                        }
+                                    }
+                                },
+                                "without_pesanan" : {
+                                    "value" : {
+                                        "msg" : "succes",
+                                        "data" : {
+                                            "id" : "5432",
+                                            "user" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com"
+                                            },
+                                            "notifikasi_category" : {
+                                                "id" : "6789",
+                                                "name" : "payment/info/rating"
+                                            },
+                                            "isi" : "habil baru saja mengajukan pesanan untuk anda",
+                                            "id_pesanan" : null
+                                        }
+                                    }
+                                }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get" : {
+                "tags": ["user/notifikasi"],
+                "description": "get all notifikasi user",
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],
+                "responses": {
+                    "200" : {
+                        "description": "all notifikasi with read or not read",
+                        "content": {
+                            "application/json" : {
+                                "examples" : {
+                                    "read" : {
+                                        "value" : {
+                                            "msg" : "success",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "user" : {
+                                                    "id" : "5432",
+                                                    "username" : "habil",
+                                                    "email" : "habil@gmail.com"
+                                                },
+                                                "notifikasi_category" : {
+                                                    "id" : "6789",
+                                                    "name" : "payment/info/rating"
+                                                },
+                                                "isi" : "habil baru saja mengajukan pesanan untuk anda",
+                                                "id_pesanan" : "7890",
+                                                "date" : "2024-08-17",
+                                                "time" : "08.00",
+                                                "read" : {
+                                                    "id" : "6709",
+                                                    "id_user" : "5432",
+                                                    "id_notifikasi" : "5432",
+                                                    "isRead" : true
+                                                }
+                                            }
+                                        } 
+                                    },
+                                    "not_read" : {
+                                        "value" : {
+                                           "msg" : "success",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "user" : {
+                                                    "id" : "5432",
+                                                    "username" : "habil",
+                                                    "email" : "habil@gmail.com"
+                                                },
+                                                "notifikasi_category" : {
+                                                    "id" : "6789",
+                                                    "name" : "payment/info/rating"
+                                                },
+                                                "isi" : "habil baru saja mengajukan pesanan untuk anda",
+                                                "id_pesanan" : "7890",
+                                                "date" : "2024-08-17",
+                                                "time" : "08.00",
+                                                "read" : null
+                                            }
+                                        } 
+                                    }
+                                }                            
+                            }
+                        }
+                    }
+                }      
+            }
+        },
+        "/user/notifikasi/{id_notifikasi}" : {
+            "get" : {
+                "description": "get notification by id",
+                "tags": ["user/notifikasi"],
+                "parameters": [
+                    {
+                    "$ref": "#/components/parameters/Authorization-Header"
+                    },
+                    {
+                        "in": "path",
+                        "name" : "id_notifikasi",
+                        "schema" : {
+                            "type": "string",
+                            "example" : "6790"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "description": "return one  notifikasi",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "succes",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "user" : {
+                                            "id" : "5432",
+                                            "username" : "habil",
+                                            "email" : "habil@gmail.com"
+                                        },
+                                        "notifikasi_category" : {
+                                            "id" : "6789",
+                                            "name" : "payment/info/rating"
+                                        },
+                                        "isi" : "habil baru saja mengajukan pesanan untuk anda",
+                                        "id_pesanan" : "7890",
+                                        "date" : "2024-08-17",
+                                        "time" : "08.00"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404" : {
+                        "description": "respponse if notification not found",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "notifikasi is not found"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post" : {
+                "summary": "read notification",
+                "tags": ["user/notifikasi"],
+                "parameters": [
+                    {
+                    "$ref": "#/components/parameters/Authorization-Header"
+                    },
+                    {
+                        "in": "path",
+                        "name" : "id_notifikasi",
+                        "schema" : {
+                            "type": "string",
+                            "example" : "6790"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "description": "response if read notificasi success",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "read notifikasi success",
+                                    "data" : {
+                                        "id" : "2345",
+                                        "user" : {
+                                            "id" : "9087",
+                                            "name" : "habil",
+                                            "email" : "habil"
+                                        },
+                                        "notifikasi" : {
+                                            "notifikasi_category" : {
+                                                "id" : "6789",
+                                                "name" : "payment/info/rating"
+                                            },
+                                            "isi" : "habil baru saja mengajukan pesanan untuk anda",
+                                            "id_pesanan" : "7890"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+
+
+        "tags : user/isOnline" : true,
+
+        "/user/servant/isOnline" : {
+            "get" : {
+                "description": "get status online user",
+                "tags": ["user/onlineManagement"],
+                "summary": "get status online siswa",
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],
+                "responses": {
+                    "200" : {
+                        "description": "response if get status online succes",
+                        "content": {
+                            "application/json" : {
+                                "examples" : {
+                                    "online" : {
+                                        "value" : {
+                                            "msg" : "cek status online succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "online" : true
+                                            }
+                                        }
+                                    },
+                                    "offline" : {
+                                        "value" : {
+                                            "msg" : "cek status online succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "online" : false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post" : {
+                "description": "update status online user",
+                "tags": ["user/onlineManagement"],
+                "summary": "update status online user",
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "examples" : {
+                                "online" : {
+                                    "value" : {
+                                        "online" : true
+                                    }
+                                },
+                                "ofline" : {
+                                    "value" : {
+                                        "online" : false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response if update status online succes",
+                        "content": {
+                            "application/json" : {
+                                "examples" : {
+                                    "online" : {
+                                        "value" : {
+                                            "msg" : "update status online success",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "online" : true
+                                            }
+                                        }
+                                    },
+                                    "offline" : {
+                                        "value" : {
+                                            "msg" : "update status online success",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "online" : false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+
+
+        "tags : user/locationNow" : true,
+
+        "/user/locationNow" : {
+            "get" : {
+                "summary": "get location now user",
+                "description": "get location now",
+                "tags": ["user/location"],
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],
+                "responses": {
+                    "200" : {
+                        "description": "response locationNow",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : {
+                                        "id_user" : "5432",
+                                        "village" : "rhee loka",
+                                        "subdistrick" : "rhee",
+                                        "regency" : "sumbawa",
+                                        "province" : "nusat tenggara barat",
+                                        "country" : "indonesia",
+                                        "latitude" : "16.9809876",
+                                        "longitude" : "-08.45896"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            },
+            "post" : {
+                "description": "add location user now",
+                "summary": "add location user now",
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],
+                "tags": ["user/location"],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "example" : {
+                                "id_user" : "5432",
+                                "village" : "rhee loka",
+                                "subdistrick" : "rhee",
+                                "regency" : "sumbawa",
+                                "province" : "nusa tenggara barat",
+                                "country" : "indonesia",
+                                "latitude" : "16.9809876",
+                                "longitude" : "-08.45896"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response location Now",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : {
+                                        "id_user" : "5432",
+                                        "village" : "rhee loka",
+                                        "subdistrick" : "rhee",
+                                        "regency" : "sumbawa",
+                                        "province" : "nusa tenggara barat",
+                                        "country" : "indonesia",
+                                        "latitude" : "16.9809876",
+                                        "longitude" : "-08.45896"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400" : {
+                        "description": "response locationNow",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "invalid latitude and longitude"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put" : {
+                "description": "update location user now",
+                "summary": "update location user now",
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],
+                "tags": ["user/location"],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "example" : {
+                                "id_user" : "5432",
+                                "village" : "rhee loka",
+                                "subdistrick" : "rhee",
+                                "regency" : "sumbawa",
+                                "province" : "nusa tenggara barat",
+                                "country" : "indonesia",
+                                "latitude" : "16.9809876",
+                                "longitude" : "-08.45896"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response location Now",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : {
+                                        "id_user" : "5432",
+                                        "village" : "rhee loka",
+                                        "subdistrick" : "rhee",
+                                        "regency" : "sumbawa",
+                                        "province" : "nusa tenggara barat",
+                                        "country" : "indonesia",
+                                        "latitude" : "16.9809876",
+                                        "longitude" : "-08.45896"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400" : {
+                        "description": "response locationNow",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "invalid latitude and longitude"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/servant/ready_order" : {
+            "get" : {
+                "tags": ["user/servant/ready_order"],
+                "description": "get status ready order servant",
+                "summary": "get status ready order servant",
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],
+                "responses": {
+                    "200" : {
+                        "description": "response status ready order servant",
+                        "content": { 
+                            "application/json" : {
+                                "examples": {
+                                    "ready" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "ready_order" : true
+                                            }
+                                        }
+                                    },
+                                    "not ready" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "ready_order" : false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put" : {
+                "description": "upate status ready order servant",
+                "summary": "upate status ready order servant",
+                "tags": ["user/servant/ready_order"],
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],
+                "requestBody" : {
+                    "content": { 
+                        "application_json" : {
+                            "example" : {
+                                "ready_order" : true
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response status ready order servant",
+                        "content": { 
+                            "application/json" : {
+                                "examples": {
+                                    "ready" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "ready_order" : true
+                                            }
+                                        }
+                                    },
+                                    "not ready" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "ready_order" : false
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401" : {
+                        "description": "response if user is not servant",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "roles other than servant are not permitted"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/password/OTP" : {
+            "get" : {
+                "description": "sendOTP to user for update password",
+                "summary": "sendOTP to use for update password",
+                "tags": ["user/password"],
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],  
+                "responses": {
+                    "200" : {
+                        "description": "response if send OTP email succes",
+                        "content": { 
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "send OTP succes,check your email for verifikasi your account"
+                                }
+                            }
+                        }
+                    },
+                    "500" : {
+                        "description": "response if something wrong",
+                        "content": { 
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "something wrong,try again later"
+                                }
+                            }
+                        }
+                    }
+                }              
+            },
+            "post" : {
+                "description": "check OTP",
+                "summary": "check OTP",
+                "tags": ["user/password"],
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],  
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "example" : {
+                                "kode_oTP" : "6789"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response if check OTP succes",
+                        "content": { 
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "check OTP succes"
+                                }
+                            }
+                        }
+                    },
+                    "400" : {
+                        "description": "response if invalid OTP",
+                        "content": { 
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "OTP wrong"
+                                }
+                            }
+                        }
+                    }
+                }              
+            }
+        },
+        "/user/password" : {
+            "put" : {
+                 "description": "update password,after checkOTP succes",
+                 "summary": "update password",
+                 "tags": ["user/password"],
+                 "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}], 
+                 "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "example" : {
+                                "passowrd" : "habil123"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response if update password success",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "update password succes"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+
+        "tags : user/vendee/profile" : true,
+
+        "/user/vandee/profile" : {
+            "get" : {
+                "description": "get profile vende",
+                "summary": "get profile vendee",
+                "tags": ["user/vende/profile"],
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}], 
+                "responses": {
+                    "200" : {
+                        "description": "response profile vendee",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "detail_vendee" : {
+                                            "deskripsi" : "bagus banget"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/vandee/profile/{id_user}" : {
+            "put" : {
+                "description": "update profile vende",
+                "summary": "update profile vendee",
+                "tags": ["user/vende/profile"],
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"},{
+                    "in": "path",
+                    "name": "id_user",
+                    "schema" : {
+                        "type": "string",
+                        "example" : "5432"
+                    },
+                    "required": true
+                }],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "example" : {
+                                "username" : "habil",
+                                "email" : "habil@gmail.com",
+                                "deskripsi" : "ini sangat bagus"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response if update profile success",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "detail_vendee" : {
+                                            "deskripsi" : "bagus banget"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400" : {
+                        "description": "response if email already exist",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "email already exist"
+                                }
+                            }
+                        }
+                    }
+                }             
+            }
+        },
+
+
+        "tags : user/servant" : true,
+
+        "/user/vendee/servant/getByRating" : {
+            "get" : {
+                "description": "get servant by rating",
+                "summary": "get servant by rating",
+                "tags": ["user/servant/get"],
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"}],
+                "responses": {
+                    "200" : {
+                        "description": "all servant with rating tertinggi",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : [
+                                        {
+                                            "id" : "5432",
+                                            "username" : "habil",
+                                            "online" : true,
+                                            "ready_order" : true,
+                                            "alamat" : {
+                                                "village" : "rhee loka",
+                                                "subdistrick" : "rhee",
+                                                "regency" : "sumbawa",
+                                                "province" : "nusa tenggara barat",
+                                                "country" : "indonesia",
+                                                "latitude" : "192.9878",
+                                                "longitude" : "-08.9786767"
+                                            },
+                                            "detail_servant" : {
+                                                "id" : "5678",
+                                                "deksripsi" : "siap menjaga rumah barang",
+                                                "pelayanan" : {
+                                                    "id" : "9876",
+                                                    "name" : "menjaga rumah"
+                                                },
+                                                "time_pelayanan" : {
+                                                    "time" : "08.00 - 22.00"
+                                                },
+                                                "rating" : "4.5"
+                                            },
+                                            "location_now" : {
+                                                "village" : "rhee loka",
+                                                "subdistrick" : "rhee",
+                                                "regency" : "sumbawa",
+                                                "province" : "nusa tenggara barat",
+                                                "country" : "indonesia",
+                                                "latitude" : "192.9878",
+                                                "longitude" : "-08.9786767"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/vendee/servant/getServantById/{id_servant}" : {
+            "get" : {
+                "description": "get servant by id",
+                "summary": "get servant by id",
+                "tags": ["user/servant/get"],
+                "parameters": [{"$ref": "#/components/parameters/Authorization-Header"},{
+                    "in": "path",
+                    "name": "id_user",
+                    "schema" : {
+                        "type": "string",
+                        "example" : "5432"
+                    },
+                    "required": true
+                }],
+                "responses": {
+                    "200" : {
+                        "description": "all servant with rating tertinggi",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "online" : true,
+                                        "ready_order" : true,
+                                        "alamat" : {
+                                            "village" : "rhee loka",
+                                            "subdistrick" : "rhee",
+                                            "regency" : "sumbawa",
+                                            "province" : "nusa tenggara barat",
+                                            "country" : "indonesia",
+                                            "latitude" : "192.9878",
+                                            "longitude" : "-08.9786767"
+                                        },
+                                        "detail_servant" : {
+                                            "id" : "5678",
+                                            "deksripsi" : "siap menjaga rumah barang",
+                                            "pelayanan" : {
+                                                "id" : "9876",
+                                                "name" : "menjaga rumah"
+                                            },
+                                            "time_pelayanan" : {
+                                                "time" : "08.00 - 22.00"
+                                            },
+                                            "rating" : "4.5",
+                                            "statistik_penjualan" : {
+                                                "dipesan" : 5,
+                                                "membatalkan" : 1,
+                                                "dibatalkan" : 0,
+                                                "total" : 6
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/vendee/servant/searchServant" : {
+            "get" : {
+                "description": "search servant",
+                "summary": "search servant",
+                "tags": ["user/servant/get"],
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/Authorization-Header"
+                    },
+                    {
+                        "in": "query",
+                        "name": "jasa",
+                        "schema" : {
+                            "type": "string",
+                            "example" : "menitip"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "filterBy",
+                        "examples": {
+                            "byRekomendasi" : {
+                                "value" : "rekomendasi"
+                            },
+                            "byRatingTertinggi" : {
+                                "value" : "ratingTertinggi"
+                            },
+                            "byRatingTerendah" : {
+                                "value" : "ratingTerendah"
+                            },
+                            "byLokasiTerdekat" : {
+                                "value" : "lokasiTerdekat"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "description": "all servant",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "success",
+                                    "data" : [
+                                        {
+                                            "id" : "5432",
+                                            "username" : "habil",
+                                            "online" : true,
+                                            "ready_order" : true,
+                                            "alamat" : {
+                                                "village" : "rhee loka",
+                                                "subdistrick" : "rhee",
+                                                "regency" : "sumbawa",
+                                                "province" : "nusa tenggara barat",
+                                                "country" : "indonesia",
+                                                "latitude" : "192.9878",
+                                                "longitude" : "-08.9786767"
+                                            },
+                                            "detail_servant" : {
+                                                "id" : "5678",
+                                                "deksripsi" : "siap menjaga rumah barang",
+                                                "pelayanan" : {
+                                                    "id" : "9876",
+                                                    "name" : "menjaga rumah"
+                                                },
+                                                "time_pelayanan" : {
+                                                    "time" : "08.00 - 22.00"
+                                                },
+                                                "rating" : "4.5"
+                                            },
+                                            "location_now" : {
+                                                "village" : "rhee loka",
+                                                "subdistrick" : "rhee",
+                                                "regency" : "sumbawa",
+                                                "province" : "nusa tenggara barat",
+                                                "country" : "indonesia",
+                                                "latitude" : "192.9878",
+                                                "longitude" : "-08.9786767"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+
+        "tags : user/pesanan" : true,
+
+        "/user/vendee/pesanan" : {
+            "get" : {
+                "tags": ["user/vendee/pesanan"],
+                "parameters": [
+                    {
+                    "$ref": "#/components/parameters/Authorization-Header"
+                    },
+                    {
+                        "in": "query",
+                        "name": "status_pesanan",
+                        "schema" : {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "selesai" : {
+                                "value" : "selesai"
+                            },
+                            "dibatalkan_vendee" : {
+                                "value" : "dibatalkan_vendee"
+                            },
+                            "dibatalkan_servant" : {
+                                "value" : "dibatalkan_servant"
+                            },
+                            "proses" : {
+                                "value" : "proses"
+                            },
+                            "pengajuan" : {
+                                "value" : "pengajuan"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "content": {
+                            "application/json" : {
+                                "examples" : {
+                                    "selesai" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "pesanans" : [
+                                                    {
+                                                        "id" : "3456",
+                                                        "servant" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                        },
+                                                        "date" : "24-07-2024",
+                                                        "time" : "08.00",
+                                                        "status" : "selesai",
+                                                        "tugas" : "menitip barang",
+                                                        "total_price" : 46000,
+                                                        "price_outside" : null,
+                                                        "other_price" : null,
+                                                        "isPay" : false,
+                                                        "isCOD" : true,
+                                                        "allowCOD" : true,
+                                                        "approved" : true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "dibatalkan_vendee" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "pesanans" : [
+                                                    {
+                                                        "id" : "3456",
+                                                        "servant" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                        },
+                                                        "date" : "24-07-2024",
+                                                        "time" : "08.00",
+                                                        "status" : "dibatalkan_vendee",
+                                                        "tugas" : "menitip barang",
+                                                        "total_price" : 46000,
+                                                        "price_outside" : null,
+                                                        "other_price" : null,
+                                                        "isPay" : false,
+                                                        "isCOD" : true,
+                                                        "allowCOD" : true,
+                                                        "approved" : true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "dibatalkan_servant" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "pesanans" : [
+                                                    {
+                                                        "id" : "3456",
+                                                        "servant" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                        },
+                                                        "date" : "24-07-2024",
+                                                        "time" : "08.00",
+                                                        "status" : "dibatalkan_servant",
+                                                        "tugas" : "menitip barang",
+                                                        "total_price" : 46000,
+                                                        "price_outside" : null,
+                                                        "other_price" : null,
+                                                        "isPay" : false,
+                                                        "isCOD" : true,
+                                                        "allowCOD" : true,
+                                                        "approved" : true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "proses" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "pesanans" : [
+                                                    {
+                                                        "id" : "3456",
+                                                        "vendee" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                        },
+                                                        "date" : "24-07-2024",
+                                                        "time" : "08.00",
+                                                        "status" : "proses",
+                                                        "tugas" : "menitip barang",
+                                                        "total_price" : 46000,
+                                                        "price_outside" : null,
+                                                        "other_price" : null,
+                                                        "isPay" : false,
+                                                        "isCOD" : true,
+                                                        "allowCOD" : true,
+                                                        "approved" : true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "pengajuan" : {
+                                        "value" : {
+                                            "msg" : "succes",
+                                            "data" : {
+                                                "id" : "5432",
+                                                "username" : "habil",
+                                                "email" : "habil@gmail.com",
+                                                "pesanans" : [
+                                                    {
+                                                        "id" : "3456",
+                                                        "servant" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                        },
+                                                        "date" : "24-07-2024",
+                                                        "time" : "08.00",
+                                                        "status" : "pengajuan",
+                                                        "tugas" : "menitip barang",
+                                                        "total_price" : 46000,
+                                                        "price_outside" : null,
+                                                        "other_price" : null,
+                                                        "isPay" : false,
+                                                        "isCOD" : true,
+                                                        "allowCOD" : true,
+                                                        "approved" : true
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                    
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/vendee/pesanan/{id_pesanan}" : {
+            "get" : {
+                "tags": ["user/vendee/pesanan"],
+                "parameters": [
+                    {
+                    "$ref": "#/components/parameters/Authorization-Header"
+                    },
+                    {
+                        "in": "path",
+                        "name": "id_pesanan",
+                        "schema" : {
+                            "type": "string",
+                            "example" : "5678"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "description": "data pesanan",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "succes",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "pesanans" : [
+                                            {
+                                                "id" : "3456",
+                                                "servant" : {
+                                                            "id" : "5432",
+                                                            "username" : "habil",
+                                                            "deskripsi" : "sangat luar biasa"
+                                                },
+                                                "date" : "24-07-2024",
+                                                "time" : "08.00",
+                                                "status" : "pengajuan",
+                                                "tugas" : "menitip barang",
+                                                "total_price" : 46000,
+                                                "price_outside" : null,
+                                                "other_price" : null,
+                                                "isPay" : false,
+                                                "isCOD" : true,
+                                                "allowCOD" : true,
+                                                "approved" : true
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/vendee/pesanan/cancel/{id_pesanan}" : {
+            "put" : {
+                "tags": ["user/vendee/pesanan"],
+                "summary": "batalkan pesanan vendee",
+                "parameters": [
+                    {
+                    "$ref": "#/components/parameters/Authorization-Header"
+                    },
+                    {
+                        "in": "path",
+                        "name": "id_pesanan",
+                        "schema" : {
+                            "type": "string",
+                            "example" : "5678"
+                        },
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200" : {
+                        "description": "data pesanans",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "succes",
+                                    "data" : {
+                                        "id" : "5432",
+                                        "username" : "habil",
+                                        "email" : "habil@gmail.com",
+                                        "pesanans" : {
+                                                "id" : "3456",
+                                                "servant" : {
+                                                    "id" : "5432",
+                                                    "username" : "habil",
+                                                    "deskripsi" : "sangat luar biasa"
+                                                },
+                                                "date" : "24-07-2024",
+                                                "time" : "08.00",
+                                                "status" : "dibatalkan_vendee",
+                                                "tugas" : "menitip barang",
+                                                "total_price" : 46000,
+                                                "price_outside" : null,
+                                                "other_price" : null,
+                                                "isPay" : false,
+                                                "isCOD" : true,
+                                                "allowCOD" : true,
+                                                "approved" : true
+                                            }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404" : {
+                        "description": "data pesanans",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "pesanan tidak ditemukan"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+
+    "components": {
+        "parameters": {
+           "Authorization-Header" : {
+                "in": "header",
+                "name": "Authorization",
+                "required": true,
+                "description": "jwt acces token for Authorization user,if token is invalid response will be return Anauthorized(401)",
+                "schema" : {
+                    "type": "string",
+                    "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                }
+            },
+           "Authorization-Header-Refresh-token" : {
+                "in": "header",
+                "name": "Authorization",
+                "required": true,
+                "description": "jwt refresh token,for refresh the acces token,if refresh token is not valid,return can be unauthorized(401)",
+                "schema" : {
+                    "type": "string",
+                    "example" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                }
+            }
+        }
+    }
+}

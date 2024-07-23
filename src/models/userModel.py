@@ -22,7 +22,6 @@ class User(Base) :
 
     alamat = relationship("Alamat_User",back_populates="user")
     location_now = relationship("Location_Now",back_populates="user")
-    tujuan_user_category = relationship("Tujuan_user_category",back_populates="tujuan_user_category")
     servant = relationship("Detail_Servant",back_populates="servant")
     vendee = relationship("Detail_Vendee",back_populates="vendee")
     notifikasi = relationship("Notifikasi",back_populates="user")
@@ -56,11 +55,10 @@ class Location_Now(Base) :
 
     user = relationship("User",back_populates="location_now")
 
-class Tujuan_user_category(Base) :
+class Tujuan_User_Category(Base) :
     __tablename__ = "tujuan_user_category"
-    id = Column(String,ForeignKey("user.id"),primary_key=True)
+    id = Column(String,primary_key=True)
     nama = Column(String)
 
-    user = relationship("User",back_populates="tujuan_user_category")
     tujuan_servant_category = relationship("Tujuan_Servant_Category",back_populates="tujuan_user_category")
     tujuan_vendee_category = relationship("Tujuan_Vendee_Category",back_populates="tujuan_user_category")

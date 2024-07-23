@@ -15,8 +15,8 @@ class Pesanan(Base) :
     __tablename__ = "pesanan"
 
     id = Column(String,primary_key=True)
-    id_detail_servant = Column(String,ForeignKey("user.id"))
-    id_detail_vendee = Column(String,ForeignKey("user.id"))
+    id_detail_servant = Column(String,ForeignKey("detail_servant.id"))
+    id_detail_vendee = Column(String,ForeignKey("detail_vendee.id"))
     processing_time = Column(DateTime,default=datetime.datetime.now())
     datetime = Column(DateTime,default=datetime.datetime.now())
     additional_information = Column(String,nullable=True)
@@ -34,6 +34,7 @@ class Pesanan(Base) :
     detail_servant = relationship("Detail_Servant",back_populates="pesanans")
     detail_vendee = relationship("Detail_Vendee",back_populates="pesanans")
     order = relationship("Order",back_populates="pesanan")
+    notifikasi = relationship("Notifikasi",back_populates="pesanan")
 
 class Order(Base) :
     __tablename__ = "order"

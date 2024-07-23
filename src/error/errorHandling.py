@@ -15,19 +15,19 @@ def add_exception_server(App : FastAPI) :
     async def handlingHttpException(request: Request, exc: HttpException):
         return JSONResponse(
             status_code=exc.status,
-            content={exc.messsage},
+            content={"msg" : exc.messsage},
         )
 
     @App.exception_handler(Exception)
     def handlingExceptionError(request: Request, exc: Exception):
         return JSONResponse(
             status_code=500,
-            content=jsonable_encoder({"msg" : "kjkjk"}),
+            content=jsonable_encoder({"msg" : exc.args}),
         )
 
     @App.exception_handler(RequestValidationError)
     async def validation_exception_handler(request, exc : RequestValidationError):
         return JSONResponse(
             status_code=400,
-            content={exc.body},
+            content={"msg" : exc.args[0][0]["msg"]},
         )

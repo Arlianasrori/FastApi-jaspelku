@@ -44,7 +44,7 @@ class Tujuan_Servant_Category(Base) :
     id_tujuan_user_category = Column(String,ForeignKey("tujuan_user_category.id"))
     isi = Column(String)
 
-    tujuan_user_category = relationship("Tujuan_user_category",back_populates="tujuan_servant_category")
+    tujuan_user_category = relationship("Tujuan_User_Category",back_populates="tujuan_servant_category")
     tujuan_servant = relationship("Tujuan_Servant",back_populates="tujuan_servant_category")
 
 class Tujuan_Servant(Base) :

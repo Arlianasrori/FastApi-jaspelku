@@ -19,7 +19,10 @@ def login(data : LoginModel,Session : Session,res : Response) :
     token = create_token_admin(token_payload)
     res.set_cookie("access_token",token["access_token"])
     res.set_cookie("refresh_token",token["refresh_token"])
-    return token
+    return {
+        "msg" : "succes",
+        "data" : token
+    }
 
 def refresh_token(data,res : Response) :
     token_payload = {"sub" : data["username"]}
@@ -27,4 +30,7 @@ def refresh_token(data,res : Response) :
     token = create_token_admin(token_payload)
     res.set_cookie("access_token",token["access_token"])
     res.set_cookie("refresh_token",token["refresh_token"])
-    return token
+    return {
+        "msg" : "succes",
+        "data" : token
+    }

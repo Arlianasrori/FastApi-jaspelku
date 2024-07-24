@@ -13,6 +13,7 @@ class User(Base) :
     id = Column(String,primary_key=True)
     username = Column(String)
     email = Column(String,unique=True)
+    no_telepon = Column(String(12),unique=True)
     password = Column(String)
     foto_profile = Column(String,nullable=True)
     isVerify = Column(Boolean,default=False)
@@ -58,7 +59,7 @@ class Location_Now(Base) :
 class Tujuan_User_Category(Base) :
     __tablename__ = "tujuan_user_category"
     id = Column(String,primary_key=True)
-    nama = Column(String)
+    name = Column(String)
 
     tujuan_servant_category = relationship("Tujuan_Servant_Category",back_populates="tujuan_user_category")
     tujuan_vendee_category = relationship("Tujuan_Vendee_Category",back_populates="tujuan_user_category")

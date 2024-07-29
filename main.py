@@ -2,18 +2,18 @@ import asyncio
 from fastapi import FastAPI
 import uvicorn
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv("/.env")
 from src.error.errorHandling import add_exception_server
 
-import src.db.database as db
-import src.models
+# import src.db.database as db
+# import src.models
 
 from src.routes.authRouter import authRouter
 from src.routes.adminRouter import adminRouter
 
 App = FastAPI()
 
-db.Base.metadata.create_all(bind=db.engine)
+# db.Base.metadata.create_all(bind=db.engine)
 
 routes = [authRouter,adminRouter]
 for router in routes :

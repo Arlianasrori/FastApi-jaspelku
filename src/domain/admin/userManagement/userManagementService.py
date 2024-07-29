@@ -1,55 +1,59 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from .userManagementModels import AddUpdateTujuanUserCategory,ResponseTujuanUserCategory
 from ....models.userModel import Tujuan_User_Category
 from ....error.errorHandling import HttpException
-# from python_random_strings import random_strings
+from python_random_strings import random_strings
+from sqlalchemy import select
+from ....utils.updateTable import updateTable
 
-def add_tujuan_user_category(data : AddUpdateTujuanUserCategory,session : Session) -> ResponseTujuanUserCategory:  
+async def add_tujuan_user_category(data : AddUpdateTujuanUserCategory,session : AsyncSession) -> ResponseTujuanUserCategory:  
     dataCopy = data.model_dump()
-    # dataCopy.update({"id" : str(random_strings.random_digits(6))})
+    dataCopy.update({"id" : str(random_strings.random_digits(6))})
     session.add(Tujuan_User_Category(**dataCopy))
-    session.commit()
+    await session.commit()
     return {
         "msg" : "succes",
         "data" : dataCopy
     }
 
-def update_tujuan_user_category(id : str,data : AddUpdateTujuanUserCategory,session : Session) -> ResponseTujuanUserCategory:
-    tujuan_user_category_query = session.query(Tujuan_User_Category).where(Tujuan_User_Category.id == id)
+async def update_tujuan_user_category(id : str,data : AddUpdateTujuanUserCategory,session : AsyncSession) -> ResponseTujuanUserCategory:
+    tujuan_user_category_query = await session.execute(select(Tujuan_User_Category).where(Tujuan_User_Category.id == id))
 
-    tujuan_user_category_before = tujuan_user_category_query.first()
+    tujuan_user_category_before = tujuan_user_category_query.scalars().first()
 
     if not tujuan_user_category_before :
         raise HttpException(status=404,message="tujuan user category tidak ditemukan")
     
-    tujuan_user_category_query.update({Tujuan_User_Category.name : data.name})
-    session.commit()
+    updateTable(data,tujuan_user_category_before)
+    print("tes bg")
+    
+    await session.commit()
     return {
         "msg" : "succes",
         "data" : {
             "id" : id,
-            "nama" : data.name
+            "name" : data.name
         }
     }
 
-def delete_tujuan_user_category(id : str,session : Session) -> ResponseTujuanUserCategory:
-    tujuan_user_category_query = session.query(Tujuan_User_Category).where(Tujuan_User_Category.id == id)
+async def delete_tujuan_user_category(id : str,session : AsyncSession) -> ResponseTujuanUserCategory:
+    statementTujuanUserCategory = await session.execute(select(Tujuan_User_Category).where(Tujuan_User_Category.id == id))
 
-    tujuan_user_category_before = tujuan_user_category_query.first()
+    tujuan_user_category = statementTujuanUserCategory.scalars().first()
 
-    if not tujuan_user_category_before :
+    if not tujuan_user_category :
         raise HttpException(status=404,message="tujuan user category tidak ditemukan")
-    
-    tujuan_user_category = tujuan_user_category_query.first()
-    tujuan_user_category_query.delete()
-    session.commit()
+
+    await session.delete(tujuan_user_category)
+    await session.commit()
     return {
         "msg" : "succes",
         "data" : tujuan_user_category
     }
 
-def getAll_tujuan_user_category(session : Session) -> list[ResponseTujuanUserCategory] :
-    tujuan_user_categories = session.query(Tujuan_User_Category).all()
+async def getAll_tujuan_user_category(session : AsyncSession) -> list[ResponseTujuanUserCategory] :
+    statementTujuanUserCategory = await session.execute(select(Tujuan_User_Category))
+    tujuan_user_categories = statementTujuanUserCategory.scalars().all()
     print(tujuan_user_categories)
     return {
         "msg" : "succes",

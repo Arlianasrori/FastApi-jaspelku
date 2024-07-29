@@ -1,12 +1,14 @@
 from fastapi import Response
 from ....auth.createTokenAdmin import create_token_admin
 from .authModels import LoginModel
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from ....error.errorHandling import HttpException
 from ....models.developerModels import Developer
+from sqlalchemy import select
 
-def login(data : LoginModel,Session : Session,res : Response) :
-    findAdmin = Session.query(Developer).where(Developer.username == data.username).first()
+async def login(data : LoginModel,Session : AsyncSession,res : Response) :
+    statement = await Session.execute(select(Developer).where(Developer.username == data.username))
+    findAdmin = statement.scalars().first()
 
     if not findAdmin :
         raise HttpException(status=400,message="username or password wrong")

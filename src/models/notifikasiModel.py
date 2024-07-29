@@ -15,29 +15,29 @@ class Notifikasi_Category(Base) :
     id = Column(String,primary_key=True)
     name = Column(Enum(NotifikasiCategory_Enunm))
 
-    notifikasi = relationship("Notifikasi",back_populates="notifikasi_category")
+    notifikasi = relationship("Notifikasi",back_populates="notifikasi_category",cascade="all")
 
 class Notifikasi(Base) :
     __tablename__ = "notifikasi"
 
-    id = Column(String,primary_key=True)
-    id_user = Column(String,ForeignKey("user.id"),nullable=True)
-    notifikasi_category_id = Column(String,ForeignKey("notifikasi_category.id"))
-    isi = Column(String)
-    id_pesanan = Column(String,ForeignKey("pesanan.id"))
+    id = Column(String,primary_key=True,nullable=False)
+    id_user = Column(String,ForeignKey("user.id",ondelete="CASCADE"),nullable=True)
+    notifikasi_category_id = Column(String,ForeignKey("notifikasi_category.id"),nullable=False)
+    isi = Column(String,nullable=False)
+    id_pesanan = Column(String,ForeignKey("pesanan.id",ondelete="CASCADE"))
 
     notifikasi_category = relationship("Notifikasi_Category",back_populates="notifikasi")
     user = relationship("User",back_populates="notifikasi")
     pesanan = relationship("Pesanan",back_populates="notifikasi")
-    notifikasi_read = relationship("Notifikasi_Read",back_populates="notifikasi")
+    notifikasi_read = relationship("Notifikasi_Read",back_populates="notifikasi",cascade="all")
 
 class Notifikasi_Read(Base) :
     __tablename__ = "notifikasi_read"
 
-    id = Column(String,primary_key=True)
-    id_user = Column(String,ForeignKey("user.id"))
-    id_notifikasi = Column(String,ForeignKey("notifikasi.id"))
-    isRead = Column(Boolean)
+    id = Column(String,primary_key=True,nullable=False)
+    id_user = Column(String,ForeignKey("user.id"),nullable=False)
+    id_notifikasi = Column(String,ForeignKey("notifikasi.id",ondelete="CASCADE"),nullable=False)
+    isRead = Column(Boolean,default=True)
     datetime = Column(DateTime,default=datetime.datetime.now())
 
     user = relationship("User",back_populates="notifikasi_read")

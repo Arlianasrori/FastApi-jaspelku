@@ -1,11 +1,18 @@
 from fastapi import APIRouter
 
+# user management
 from ..domain.admin.userManagement.userManagementModels import AddUpdateTujuanUserCategory,ResponseTujuanUserCategory
-from ..domain.admin.servantManagement.servantManagementModels import AddPelayananServantCategory, ServantBase,UpdatePelayananServantCategory,ResponsePelayananServantCategory,AddServant,AddDetailservant,AddAlamat,UpdateServant,UpdateDetailservant,UpdateAlamat,SearchServant,SearchServantResponse,MoreServantBase
+from ..domain.admin.userManagement import userManagementService
+
 from ..models.responseModel import ResponseModel
 
-from ..domain.admin.userManagement import userManagementService
+# servant management
+from ..domain.admin.servantManagement.servantManagementModels import AddPelayananServantCategory, ServantBase,UpdatePelayananServantCategory,ResponsePelayananServantCategory,AddServant,AddDetailservant,AddAlamat,UpdateServant,UpdateDetailservant,UpdateAlamat,SearchServant,SearchServantResponse,MoreServantBase
 from ..domain.admin.servantManagement import servantManagementService 
+
+# vendee management
+from ..domain.admin.vendeeManagement.vendeeManagementModel import VendeeBase,MoreVendee,AddVendee,AddAlamat,AddDetailVendee,SearchVendee,SearchVendeeResponse,Updatevendee,UpdateAlamat,UpdateDetailVendee
+from ..domain.admin.vendeeManagement import vendeeManagementService
 
 from ..utils.sessionDepedency import sessionDepedency
 from ..auth.adminAuthCookie import adminCookieAuth
@@ -54,7 +61,7 @@ async def getAllpelayananCategory(session : sessionDepedency) :
 # servant
 @adminRouter.get("/servant",response_model=ResponseModel[list[ServantBase]])
 async def getAllServant(session : sessionDepedency) :
-    return await servantManagementService.getAllServant(session)
+    return await servantManagementService.getAllServants(session)
 
 @adminRouter.get("/servant/search",response_model=ResponseModel[SearchServantResponse])
 async def searchServant(page : int,filter : SearchServant | None = SearchServant(),session : sessionDepedency = None) :
@@ -73,5 +80,32 @@ async def updateServant(id : str,servant : UpdateServant | None = None,alamat : 
     return await servantManagementService.update_servant(id,servant,alamat,detail_servant,session)
 
 @adminRouter.delete("/servant/{id}",response_model=ResponseModel[ServantBase])
-async def updateServant(id : str,session : sessionDepedency) :
+async def deleteServant(id : str,session : sessionDepedency) :
     return await servantManagementService.delete_servant(id,session)
+
+
+
+# vendee
+@adminRouter.get("/vendee",response_model=ResponseModel[list[VendeeBase]])
+async def getAllVendee(session : sessionDepedency) :
+    return await vendeeManagementService.getAllvendees(session)
+
+@adminRouter.get("/vendee/search",response_model=ResponseModel[SearchVendeeResponse])
+async def searchVendee(page : int,filter : SearchVendee | None = SearchVendee(),session : sessionDepedency = None) :
+    return await vendeeManagementService.searchvendee(page,filter,session)
+
+@adminRouter.get("/vendee/{id}",response_model=ResponseModel[MoreVendee])
+async def getVendeeById(id : str,session : sessionDepedency) :
+    return await vendeeManagementService.getvendeeById(id,session)
+
+@adminRouter.post("/vendee",response_model=ResponseModel[VendeeBase])
+async def addVendee(vendee : AddVendee,alamat : AddAlamat,detail_vendee : AddDetailVendee,session : sessionDepedency) :
+    return await vendeeManagementService.add_vendee(vendee,alamat,detail_vendee,session)
+
+@adminRouter.put("/vendee/{id}",response_model=ResponseModel[VendeeBase])
+async def updatevendee(id : str,vendee : Updatevendee | None = None,alamat : UpdateAlamat| None = None,detail_vendee : UpdateDetailVendee | None = None,session : sessionDepedency = None) :
+    return await vendeeManagementService.update_vendee(id,vendee,alamat,detail_vendee,session)
+
+@adminRouter.delete("/vendee/{id}",response_model=ResponseModel[VendeeBase])
+async def deletevendee(id : str,session : sessionDepedency) :
+    return await vendeeManagementService.delete_vendee(id,session)

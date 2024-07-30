@@ -1,9 +1,8 @@
 from pydantic import BaseModel,EmailStr
 from typing import Union
-
-from datetime import datetime as DateTimetype
 from ....models.servantModel import DayEnum
-from ....models.pesananModel import Status_Pesanan_Enum
+from ..pesananOrderManagement.pesananOrderManagementModel import PesananBase,OrderBase
+from ....models.userModel import RoleUser
 
 # pelayanan servant
 class AddPelayananServantCategory(BaseModel) :
@@ -50,29 +49,10 @@ class DetailServantBase(BaseModel) :
     ready_order : bool
     pelayanan : PelayananServantBase
 
-class PesananServant(BaseModel) :
-    id : str
-    processing_time : int
-    datetime : DateTimetype
-    additional_information : str
-    order_estimate : str
-    status : Status_Pesanan_Enum
-    tugas : str
-    total_price : int
-    price_outside : int
-    other_price : int
-    isPay : bool
-    approved : bool
-    allowPayLater : bool
-    isPayLater : bool
+class PesananServant(PesananBase) :
     detail_vendee : dict
 
-class OrderServant(BaseModel) :
-    id : str
-    payment_using : str
-    price : int
-    dateTime : DateTimetype
-    detail_vendee : dict
+class OrderServant(OrderBase) :
     pesanan : PesananServant
 
 class MoreDetailServant(DetailServantBase) :
@@ -83,15 +63,6 @@ class MoreDetailServant(DetailServantBase) :
     pesanans : list[PesananServant] | list = []
     orders : list[OrderServant] | list = []
 
-class MoreServantBase(BaseModel) :
-    id : str
-    username : str
-    email : EmailStr
-    no_telepon : str
-    foto_profile : Union[str,None]
-    isVerify : bool
-    servant : MoreDetailServant 
-    alamat : AlamatBase
 
 class ServantBase(BaseModel) : 
     id : str
@@ -103,10 +74,8 @@ class ServantBase(BaseModel) :
     servant : DetailServantBase 
     alamat : AlamatBase
 
-class SearchServantResponse(BaseModel) :
-    servant : list[ServantBase]
-    count_data : int
-    count_page : int
+class MoreServantBase(ServantBase) :
+    servant : MoreDetailServant 
 
 # add
 class AddDetailservant(BaseModel) : 
@@ -119,6 +88,7 @@ class AddServant(BaseModel) :
     no_telepon : str
     password : str
     isVerify : bool = True
+    role : str = RoleUser.servant
 
 class AddAlamat(BaseModel) :
     village : str
@@ -136,6 +106,9 @@ class UpdateDetailservant(BaseModel) :
 
 class UpdateServant(BaseModel) :
     username : Union[str | None] = None
+    email : Union[EmailStr | None] = None
+    no_telepon : Union[str | None] = None
+    password : Union[str | None] = None
 
 class UpdateAlamat(BaseModel) :
     village : Union[str | None] = None
@@ -151,3 +124,8 @@ class SearchServant(BaseModel) :
     username : str | None = None
     online : bool | None = None
     ready_order : bool | None = None
+
+class SearchServantResponse(BaseModel) :
+    servant : list[ServantBase]
+    count_data : int
+    count_page : int

@@ -4,11 +4,11 @@ from operator import or_
 from types import NoneType
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
-from ....models.servantModel import Pelayanan_Category
+from ....models.servantModel import Pelayanan_Category,Tujuan_Servant_Category
 from .servantManagementModels import AddPelayananServantCategory,UpdatePelayananServantCategory,ResponsePelayananServantCategory
 from ....error.errorHandling import HttpException
-from .servantManagementModels import ServantBase,AddServant,AddDetailservant,AddAlamat,UpdateAlamat,UpdateServant,UpdateDetailservant,SearchServant,SearchServantResponse,MoreServantBase
-from ....models.userModel import User,Alamat_User,RoleUser
+from .servantManagementModels import ServantBase,AddServant,AddDetailservant,AddAlamat,UpdateAlamat,UpdateServant,UpdateDetailservant,SearchServant,SearchServantResponse,MoreServantBase,AddTujuanServantCategory,UpdateTujuanServantCategory,TujuanServantCategoryBase
+from ....models.userModel import User,Alamat_User,RoleUser,Tujuan_User_Category
 from ....models.servantModel import Detail_Servant
 from ....models.ratingModel import Rating
 from python_random_strings import random_strings
@@ -222,4 +222,77 @@ async def getServantById(id : str,session : AsyncSession) -> MoreServantBase :
     return {
         "msg" : "succes",
         "data" : servant
+    }
+
+
+# tujuan servant category
+async def addTujuanServantCategory(tujuan_servant_category : AddTujuanServantCategory,session : AsyncSession) -> TujuanServantCategoryBase :
+    statementTujuanUser = await session.execute(select(Tujuan_User_Category).where(Tujuan_User_Category.id == tujuan_servant_category.id_tujuan_user_category))
+    findTujuanUser = statementTujuanUser.scalars().first()
+
+    # check if tujuan user is exist
+    if not findTujuanUser :
+        raise HttpException(404,"tujuan user category tidak ditemukan")
+    
+    tujuan_servant_mapping = tujuan_servant_category.model_dump()
+    tujuan_servant_mapping.update({"id" : str(random_strings.random_digits(6))})
+    session.add(Tujuan_Servant_Category(**tujuan_servant_mapping))
+    await session.commit()
+
+    return {
+        "msg" : "success",
+        "data" : tujuan_servant_mapping
+    }
+
+async def updateTujuanServantCategory(id : str,tujuan_servant_category : UpdateTujuanServantCategory,session : AsyncSession) -> TujuanServantCategoryBase :
+    statementGetTujuan = await session.execute(select(Tujuan_Servant_Category).where(Tujuan_Servant_Category.id == id))
+    findTujuan = statementGetTujuan.scalars().first()
+
+    if not findTujuan : 
+        raise HttpException(404,"tujuan servant category tidak ditemukan")
+    
+    updateTable(tujuan_servant_category,findTujuan)
+    tujuanServant = deepcopy(findTujuan.__dict__)
+    await session.commit()
+
+    return {
+        "msg" : "success",
+        "data" : tujuanServant
+    }
+
+async def deleteTujuanServantCategory(id : str,session : AsyncSession) -> TujuanServantCategoryBase :
+    statementGetTujuan = await session.execute(select(Tujuan_Servant_Category).where(Tujuan_Servant_Category.id == id))
+    findTujuan = statementGetTujuan.scalars().first()
+
+    if not findTujuan : 
+        raise HttpException(404,"tujuan servant category tidak ditemukan")
+    
+    await session.delete(findTujuan)
+    tujuanServant = deepcopy(findTujuan.__dict__)
+    await session.commit()
+
+    return {
+        "msg" : "success",
+        "data" : tujuanServant
+    }
+
+async def getAllTujuanServantCategory(session : AsyncSession) -> list[TujuanServantCategoryBase] :
+    statementGetTujuanServant = await session.execute(select(Tujuan_Servant_Category))
+    allTujuanServantCategory = statementGetTujuanServant.scalars().all()
+
+    return {
+        "msg" : "success",
+        "data" : allTujuanServantCategory
+    }
+
+async def getTujuanServantCategoryById(id : str,session : AsyncSession) -> TujuanServantCategoryBase :
+    statementGetTujuanServant = await session.execute(select(Tujuan_Servant_Category).where(Tujuan_Servant_Category.id == id))
+    tujuanServantCategory = statementGetTujuanServant.scalars().first()
+
+    if not tujuanServantCategory :
+        raise HttpException(404,"tujuan servant category tidak ditemukan")
+
+    return {
+        "msg" : "success",
+        "data" : tujuanServantCategory
     }

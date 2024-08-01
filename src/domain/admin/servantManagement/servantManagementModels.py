@@ -77,6 +77,12 @@ class ServantBase(BaseModel) :
 class MoreServantBase(ServantBase) :
     servant : MoreDetailServant 
 
+# tujuan servant category
+class TujuanServantCategoryBase(BaseModel) :
+    id : str
+    id_tujuan_user_category : str
+    isi : str
+
 # add
 class AddDetailservant(BaseModel) : 
     deskripsi : str
@@ -98,6 +104,14 @@ class AddAlamat(BaseModel) :
     country : str
     latitude : Union[str | None] = None
     longitude : Union[str | None] = None
+
+class AddTujuanServantCategory(BaseModel) :
+    id_tujuan_user_category : str
+    isi : str
+
+class UpdateTujuanServantCategory(BaseModel) :
+    id_tujuan_user_category : Union[str,None] = None
+    isi : Union[str,None] = None
 
 # update
 class UpdateDetailservant(BaseModel) : 

@@ -1,6 +1,7 @@
 from ....models.pesananModel import Status_Pesanan_Enum
 from pydantic import BaseModel
 from datetime import datetime as DateTimetype
+from typing import Union
 
 
 class PesananBase(BaseModel) :
@@ -18,11 +19,26 @@ class PesananBase(BaseModel) :
     approved : bool
     allowPayLater : bool
     isPayLater : bool
-    detail_vendee : dict
 
 class OrderBase(BaseModel) :
     id : str
     payment_using : str
     price : int
     dateTime : DateTimetype
+
+class PesananWithVendeeServant(PesananBase) :
+    detail_servant : dict
     detail_vendee : dict
+
+class OrdernWithVendeeServant(PesananBase) :
+    detail_servant : dict
+    detail_vendee : dict
+    pesanan : PesananBase
+
+class SearchPesanan(BaseModel) :
+    servant : Union[str | None] = None
+    vendee : Union[str | None] = None
+    tugas : Union[str | None] = None
+    year : Union[int | None] = None
+    month : Union[int | None] = None
+    day : Union[int | None] = None

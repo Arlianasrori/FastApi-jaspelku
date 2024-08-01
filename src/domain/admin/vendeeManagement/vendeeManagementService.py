@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from .vendeeManagementModel import VendeeBase,AddVendee,AddAlamat,AddDetailVendee,Updatevendee,UpdateAlamat,UpdateDetailVendee,MoreVendee,SearchVendeeResponse,SearchVendee
+from .vendeeManagementModel import VendeeBase,AddVendee,AddAlamat,AddDetailVendee,Updatevendee,UpdateAlamat,UpdateDetailVendee,MoreVendee,SearchVendeeResponse,SearchVendee,TujuanVendeeCategoryBase,AddTujuanVendeeCategory,UpdateTujuanVendeeCategory
 from sqlalchemy import select,or_,and_,func
 from sqlalchemy.orm import joinedload
 from ....utils.updateTable import updateTable
-from ....models.userModel import RoleUser, User,Alamat_User
-from ....models.vendeeModel import Detail_Vendee
+from ....models.userModel import RoleUser, User,Alamat_User,Tujuan_User_Category
+from ....models.vendeeModel import Detail_Vendee,Tujuan_Vendee_Category
 from ....error.errorHandling import HttpException
 from python_random_strings import random_strings
 from copy import deepcopy
@@ -136,4 +136,77 @@ async def getvendeeById(id : str,session : AsyncSession) -> MoreVendee:
     return {
         "msg" : "succes",
         "data" : findDetailVendee
+    }
+
+
+# tujuan vendee category
+async def addTujuanVendeeCategory(tujuan_vendee_category : AddTujuanVendeeCategory,session : AsyncSession) -> TujuanVendeeCategoryBase :
+    statementTujuanUser = await session.execute(select(Tujuan_User_Category).where(Tujuan_User_Category.id == tujuan_vendee_category.id_tujuan_user_category))
+    findTujuanUser = statementTujuanUser.scalars().first()
+
+    # check if tujuan user is exist
+    if not findTujuanUser :
+        raise HttpException(404,"tujuan user category tidak ditemukan")
+    
+    tujuan_vendee_mapping = tujuan_vendee_category.model_dump()
+    tujuan_vendee_mapping.update({"id" : str(random_strings.random_digits(6))})
+    session.add(Tujuan_Vendee_Category(**tujuan_vendee_mapping))
+    await session.commit()
+
+    return {
+        "msg" : "success",
+        "data" : tujuan_vendee_mapping
+    }
+
+async def updateTujuanVendeeCategory(id : str,tujuan_vendee_category : UpdateTujuanVendeeCategory,session : AsyncSession) -> TujuanVendeeCategoryBase :
+    statementGetTujuan = await session.execute(select(Tujuan_Vendee_Category).where(Tujuan_Vendee_Category.id == id))
+    findTujuan = statementGetTujuan.scalars().first()
+
+    if not findTujuan : 
+        raise HttpException(404,"tujuan vendee category tidak ditemukan")
+    
+    updateTable(tujuan_vendee_category,findTujuan)
+    tujuanVendee = deepcopy(findTujuan.__dict__)
+    await session.commit()
+
+    return {
+        "msg" : "success",
+        "data" : tujuanVendee
+    }
+
+async def deleteTujuanvendeeCategory(id : str,session : AsyncSession) -> TujuanVendeeCategoryBase :
+    statementGetTujuan = await session.execute(select(Tujuan_Vendee_Category).where(Tujuan_Vendee_Category.id == id))
+    findTujuan = statementGetTujuan.scalars().first()
+
+    if not findTujuan : 
+        raise HttpException(404,"tujuan vendee category tidak ditemukan")
+    
+    await session.delete(findTujuan)
+    tujuanVendee = deepcopy(findTujuan.__dict__)
+    await session.commit()
+
+    return {
+        "msg" : "success",
+        "data" : tujuanVendee
+    }
+
+async def getAllTujuanVendeeCategory(session : AsyncSession) -> list[TujuanVendeeCategoryBase] :
+    statementGetTujuanvendee = await session.execute(select(Tujuan_Vendee_Category))
+    allTujuanVendeeCategory = statementGetTujuanvendee.scalars().all()
+
+    return {
+        "msg" : "success",
+        "data" : allTujuanVendeeCategory
+    }
+
+async def getTujuanVendeeCategoryById(id : str,session : AsyncSession) -> TujuanVendeeCategoryBase :
+    statementGetTujuanVendee = await session.execute(select(Tujuan_Vendee_Category).where(Tujuan_Vendee_Category.id == id))
+    tujuanVendeeCategory = statementGetTujuanVendee.scalars().first()
+
+    if not tujuanVendeeCategory :
+        raise HttpException(404,"tujuan servant category tidak ditemukan")
+
+    return {
+        "msg" : "success",
+        "data" : tujuanVendeeCategory
     }

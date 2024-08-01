@@ -90,3 +90,17 @@ class SearchVendeeResponse(BaseModel) :
     vendee : list[VendeeBase]
     count_data : int
     count_page : int
+
+# tujuan vendee category
+class TujuanVendeeCategoryBase(BaseModel) :
+    id : str
+    id_tujuan_user_category : str
+    isi : str
+
+class AddTujuanVendeeCategory(BaseModel) :
+    id_tujuan_user_category : str
+    isi : str
+
+class UpdateTujuanVendeeCategory(BaseModel) :
+    id_tujuan_user_category : Union[str,None] = None
+    isi : Union[str,None] = None

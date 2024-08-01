@@ -7,12 +7,17 @@ from ..domain.admin.userManagement import userManagementService
 from ..models.responseModel import ResponseModel
 
 # servant management
-from ..domain.admin.servantManagement.servantManagementModels import AddPelayananServantCategory, ServantBase,UpdatePelayananServantCategory,ResponsePelayananServantCategory,AddServant,AddDetailservant,AddAlamat,UpdateServant,UpdateDetailservant,UpdateAlamat,SearchServant,SearchServantResponse,MoreServantBase
+from ..domain.admin.servantManagement.servantManagementModels import AddPelayananServantCategory, ServantBase,UpdatePelayananServantCategory,ResponsePelayananServantCategory,AddServant,AddDetailservant,AddAlamat,UpdateServant,UpdateDetailservant,UpdateAlamat,SearchServant,SearchServantResponse,MoreServantBase,AddTujuanServantCategory,UpdateTujuanServantCategory,TujuanServantCategoryBase
 from ..domain.admin.servantManagement import servantManagementService 
 
 # vendee management
-from ..domain.admin.vendeeManagement.vendeeManagementModel import VendeeBase,MoreVendee,AddVendee,AddAlamat,AddDetailVendee,SearchVendee,SearchVendeeResponse,Updatevendee,UpdateAlamat,UpdateDetailVendee
+from ..domain.admin.vendeeManagement.vendeeManagementModel import VendeeBase,MoreVendee,AddVendee,AddAlamat,AddDetailVendee,SearchVendee,SearchVendeeResponse,Updatevendee,UpdateAlamat,UpdateDetailVendee,TujuanVendeeCategoryBase,AddTujuanVendeeCategory,UpdateTujuanVendeeCategory
 from ..domain.admin.vendeeManagement import vendeeManagementService
+
+# pesanan order management
+from ..domain.admin.pesananOrderManagement.pesananOrderManagementModel import SearchPesanan,PesananBase,OrderBase,OrdernWithVendeeServant,PesananWithVendeeServant
+from ..domain.admin.pesananOrderManagement import pesananOrderManagementService
+
 
 from ..utils.sessionDepedency import sessionDepedency
 from ..auth.adminAuthCookie import adminCookieAuth
@@ -109,3 +114,53 @@ async def updatevendee(id : str,vendee : Updatevendee | None = None,alamat : Upd
 @adminRouter.delete("/vendee/{id}",response_model=ResponseModel[VendeeBase])
 async def deletevendee(id : str,session : sessionDepedency) :
     return await vendeeManagementService.delete_vendee(id,session)
+
+
+# tujuan servant category
+@adminRouter.get("/tujuan_servant_category",response_model=ResponseModel[list[TujuanServantCategoryBase]])
+async def getAllTujuanServantCategory(session : sessionDepedency) :
+    return await servantManagementService.getAllTujuanServantCategory(session)
+
+@adminRouter.get("/tujuan_servant_category/{id}",response_model=ResponseModel[TujuanServantCategoryBase])
+async def getTujuanServantCategoryById(id : str,session : sessionDepedency) :
+    return await servantManagementService.getTujuanServantCategoryById(id,session)
+
+@adminRouter.post("/tujuan_servant_category",response_model=ResponseModel[TujuanServantCategoryBase])
+async def addTujuanServantCategoryById(tujuan_servant_category : AddTujuanServantCategory,session : sessionDepedency) :
+    return await servantManagementService.addTujuanServantCategory(tujuan_servant_category,session)
+
+@adminRouter.put("/tujuan_servant_category/{id}",response_model=ResponseModel[TujuanServantCategoryBase])
+async def updateTujuanServantCategory(id : str,tujuan_servant_category : UpdateTujuanServantCategory | None = None,session : sessionDepedency = None) :
+    return await servantManagementService.updateTujuanServantCategory(id,tujuan_servant_category,session)
+
+@adminRouter.delete("/tujuan_servant_category/{id}",response_model=ResponseModel[TujuanServantCategoryBase])
+async def deleteTujuanServantCategory(id : str,session : sessionDepedency) :
+    return await servantManagementService.deleteTujuanServantCategory(id,session)
+
+
+# tujuan servant category
+@adminRouter.get("/tujuan_vendee_category",response_model=ResponseModel[list[TujuanVendeeCategoryBase]])
+async def getAllTujuanVendeeCategory(session : sessionDepedency) :
+    return await vendeeManagementService.getAllTujuanVendeeCategory(session)
+
+@adminRouter.get("/tujuan_vendee_category/{id}",response_model=ResponseModel[TujuanVendeeCategoryBase])
+async def getTujuanVendeeCategoryById(id : str,session : sessionDepedency) :
+    return await vendeeManagementService.getTujuanVendeeCategoryById(id,session)
+
+@adminRouter.post("/tujuan_vendee_category",response_model=ResponseModel[TujuanVendeeCategoryBase])
+async def addTujuanVendeeCategoryById(tujuan_vendee_category : AddTujuanServantCategory,session : sessionDepedency) :
+    return await vendeeManagementService.addTujuanVendeeCategory(tujuan_vendee_category,session)
+
+@adminRouter.put("/tujuan_vendee_category/{id}",response_model=ResponseModel[TujuanVendeeCategoryBase])
+async def updateTujuanVendeeCategory(id : str,tujuan_vendee_category : UpdateTujuanServantCategory | None = None,session : sessionDepedency = None) :
+    return await vendeeManagementService.updateTujuanVendeeCategory(id,tujuan_vendee_category,session)
+
+@adminRouter.delete("/tujuan_vendee_category/{id}",response_model=ResponseModel[TujuanVendeeCategoryBase])
+async def deleteTujuanVendeeCategory(id : str,session : sessionDepedency) :
+    return await vendeeManagementService.deleteTujuanvendeeCategory(id,session)
+
+
+# pesanan 
+@adminRouter.get("/pesanan/search")
+async def searchPesanan(page : int,filter : SearchPesanan,session : sessionDepedency) :
+    return await pesananOrderManagementService.searchPesanan(page,filter,session)

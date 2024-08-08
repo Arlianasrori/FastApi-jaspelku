@@ -24,7 +24,8 @@
                             "example" : {
                                 "email" : "habil@gmail.com",
                                 "username" : "habil",
-                                "password" : "habil123"
+                                "password" : "habil123",
+                                "no_telepon" : "085238586875"
                             }
                         }
                     }
@@ -40,6 +41,7 @@
                                         "id" : "2345",
                                         "email" : "habil@gmail.com",
                                         "username" : "habil123",
+                                        "no_telepon" : "085238586875",
                                         "acces_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
                                         "refresh_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
                                     }
@@ -67,7 +69,7 @@
                     "content": {
                         "application/json" : {
                             "example" : {
-                                "email" : "habil@gmail.com",
+                                "textBody" : "habil@gmail.com or 085238586875",
                                 "password" : "habil123"
                             }
                         }
@@ -174,7 +176,8 @@
                                     "data" : {
                                         "id" : "2345",
                                         "username" : "habil",
-                                        "email" : "habil@gmail.com"
+                                        "email" : "habil@gmail.com",
+                                        "role" : "servant or vendee"
                                     }
                                 }
                             }

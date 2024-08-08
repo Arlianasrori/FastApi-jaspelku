@@ -29,7 +29,7 @@ class Detail_Servant(Base) :
     ready_order = Column(Boolean,default=False)
     id_pelayanan = Column(String,ForeignKey("pelayanan_category.id"),nullable=False)
 
-    servant = relationship("User",back_populates="servant")
+    servant = relationship("User",back_populates="servant",uselist=False)
     pelayanan = relationship("Pelayanan_Category",back_populates="detail_servant",innerjoin=True)
     tujuan_servant = relationship("Tujuan_Servant",back_populates="detail_servant",uselist=False,cascade="all")
     jadwal_pelayanan = relationship("Jadwal_Pelayanan",back_populates="detail_servant",cascade="all")

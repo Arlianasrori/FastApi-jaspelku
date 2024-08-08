@@ -1,5 +1,5 @@
 from ..db.database import Base
-from sqlalchemy import Column,String,Boolean,Enum,ForeignKey,Integer,DateTime
+from sqlalchemy import Column,String,Boolean,Enum,ForeignKey,Integer,Date,Time
 from sqlalchemy.orm import relationship
 from enum import Enum as enum
 import datetime
@@ -17,8 +17,8 @@ class Pesanan(Base) :
     id = Column(String,primary_key=True,nullable=False)
     id_detail_servant = Column(String,ForeignKey("detail_servant.id",ondelete="CASCADE"),nullable=False)
     id_detail_vendee = Column(String,ForeignKey("detail_vendee.id",ondelete="CASCADE"),nullable=False)
-    processing_time = Column(DateTime,default=datetime.datetime.now(),nullable=False)
-    datetime = Column(DateTime,default=datetime.datetime.now(),nullable=False)
+    date = Column(Date,default=datetime.datetime.now().date(),nullable=False)
+    time = Column(Time,default=datetime.datetime.now().time(),nullable=False)
     additional_information = Column(String,nullable=True)
     order_estimate = Column(String,nullable=False)
     status = Column(Enum(Status_Pesanan_Enum),nullable=False)
@@ -45,7 +45,8 @@ class Order(Base) :
     id_pesanan = Column(String,ForeignKey("pesanan.id",ondelete="CASCADE"))
     payment_using = Column(String,nullable=False)
     price  = Column(Integer,nullable=False) 
-    dateTime  = Column(DateTime,default=datetime.datetime.now(),nullable=False)
+    date  = Column(Date,default=datetime.datetime.now().date(),nullable=False)
+    time  = Column(Time,default=datetime.datetime.now().time(),nullable=False)
 
     detail_servant = relationship("Detail_Servant",back_populates="orders")
     detail_vendee = relationship("Detail_Vendee",back_populates="orders")

@@ -56,6 +56,12 @@ class Location_Now(Base) :
 
     user = relationship("User",back_populates="location_now")
 
+class OTPVerifyUser(Base) :
+    __tablename__ = "OTP_User"
+    id_user = Column("user.id",ForeignKey("user.id",ondelete="CASCADE"),primary_key=True,nullable=False)
+    OTP = Column(String(6),nullable=False)
+    expires = Column(String,nullable=False)
+
 class Tujuan_User_Category(Base) :
     __tablename__ = "tujuan_user_category"
     id = Column(String,primary_key=True)

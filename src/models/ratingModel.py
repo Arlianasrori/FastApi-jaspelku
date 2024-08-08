@@ -1,5 +1,5 @@
 from ..db.database import Base
-from sqlalchemy import Column, Integer,String,Enum,ForeignKey,UniqueConstraint,CheckConstraint
+from sqlalchemy import Column, Integer,String,ForeignKey,UniqueConstraint,CheckConstraint
 from sqlalchemy.orm import relationship
 from enum import Enum as enum
 

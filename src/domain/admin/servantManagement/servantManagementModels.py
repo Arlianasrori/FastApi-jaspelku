@@ -3,6 +3,7 @@ from typing import Union
 from ....models.servantModel import DayEnum
 from ..pesananOrderManagement.pesananOrderManagementModel import PesananBase,OrderBase
 from ....models.userModel import RoleUser
+from ....utils.BaseModelWithPhone import BaseModelWithPhoneValidation
 
 # pelayanan servant
 class AddPelayananServantCategory(BaseModel) :
@@ -64,7 +65,7 @@ class MoreDetailServant(DetailServantBase) :
     orders : list[OrderServant] | list = []
 
 
-class ServantBase(BaseModel) : 
+class ServantBase(BaseModelWithPhoneValidation) : 
     id : str
     username : str
     email : EmailStr
@@ -88,7 +89,7 @@ class AddDetailservant(BaseModel) :
     deskripsi : str
     id_pelayanan : str
 
-class AddServant(BaseModel) :
+class AddServant(BaseModelWithPhoneValidation) :
     username : str
     email : EmailStr
     no_telepon : str
@@ -118,10 +119,10 @@ class UpdateDetailservant(BaseModel) :
     deskripsi : Union[str | None] = None
     id_pelayanan : Union[str | None] = None
 
-class UpdateServant(BaseModel) :
+class UpdateServant(BaseModelWithPhoneValidation) :
     username : Union[str | None] = None
     email : Union[EmailStr | None] = None
-    no_telepon : Union[str | None] = None
+    no_telepon : str = None
     password : Union[str | None] = None
 
 class UpdateAlamat(BaseModel) :
@@ -138,6 +139,18 @@ class SearchServant(BaseModel) :
     username : str | None = None
     online : bool | None = None
     ready_order : bool | None = None
+
+    model_config = {
+        "json_schema": {
+            "examples": [
+                {
+                    "username" : "habil",
+                    "online": True,
+                    "ready_order" : True
+                }
+            ]
+        }
+    }
 
 class SearchServantResponse(BaseModel) :
     servant : list[ServantBase]

@@ -2,6 +2,7 @@ from pydantic import BaseModel,EmailStr
 from typing import Union
 from ..pesananOrderManagement.pesananOrderManagementModel import PesananBase,OrderBase
 from ....models.userModel import RoleUser
+from ....utils.BaseModelWithPhone import BaseModelWithPhoneValidation
 
 class AlamatBase(BaseModel) :
     village : str
@@ -28,7 +29,7 @@ class MoreDetailVendee(DetailVendeeBase) :
     pesanans : Union[list[PesananVendee] | list] = []
     orders  : Union[list[OrderVendee] | list] = []
 
-class VendeeBase(BaseModel) : 
+class VendeeBase(BaseModelWithPhoneValidation) : 
     id : str
     username : str
     email : EmailStr
@@ -45,7 +46,7 @@ class MoreVendee(VendeeBase) :
 class AddDetailVendee(BaseModel) : 
     deskripsi : str
 
-class AddVendee(BaseModel) :
+class AddVendee(BaseModelWithPhoneValidation) :
     username : str
     email : EmailStr
     no_telepon : str
@@ -66,10 +67,10 @@ class AddAlamat(BaseModel) :
 class UpdateDetailVendee(BaseModel) : 
     deskripsi : Union[str | None] = None
 
-class Updatevendee(BaseModel) :
+class Updatevendee(BaseModelWithPhoneValidation) :
     username : Union[str | None] = None
     email : Union[EmailStr | None] = None
-    no_telepon : Union[str | None] = None
+    no_telepon : str | None = None
     password : Union[str | None] = None
 
 class UpdateAlamat(BaseModel) :

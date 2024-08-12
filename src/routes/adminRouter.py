@@ -7,20 +7,22 @@ from ..domain.admin.userManagement import userManagementService
 from ..models.responseModel import ResponseModel
 
 # servant management
-from ..domain.admin.servantManagement.servantManagementModels import AddPelayananServantCategory, ServantBase,UpdatePelayananServantCategory,ResponsePelayananServantCategory,AddServant,AddDetailservant,AddAlamat,UpdateServant,UpdateDetailservant,UpdateAlamat,SearchServant,SearchServantResponse,MoreServantBase,AddTujuanServantCategory,UpdateTujuanServantCategory,TujuanServantCategoryBase
+from ..domain.admin.servantManagement.servantManagementModels import AddPelayananServantCategory,UpdatePelayananServantCategory,ResponsePelayananServantCategory,AddServant,AddDetailservant,AddAlamat,UpdateServant,UpdateDetailservant,UpdateAlamat,SearchServant,SearchServantResponse,AddTujuanServantCategory,UpdateTujuanServantCategory
 from ..domain.admin.servantManagement import servantManagementService 
+from ..domain.models_domain.servantModel import MoreServantBase,TujuanServantCategoryBase,ServantBase
 
 # vendee management
-from ..domain.admin.vendeeManagement.vendeeManagementModel import VendeeBase,MoreVendee,AddVendee,AddAlamat,AddDetailVendee,SearchVendee,SearchVendeeResponse,Updatevendee,UpdateAlamat,UpdateDetailVendee,TujuanVendeeCategoryBase,AddTujuanVendeeCategory,UpdateTujuanVendeeCategory
+from ..domain.admin.vendeeManagement.vendeeManagementModel import AddVendee,AddAlamat,AddDetailVendee,SearchVendee,SearchVendeeResponse,Updatevendee,UpdateAlamat,UpdateDetailVendee,TujuanVendeeCategoryBase,AddTujuanVendeeCategory,UpdateTujuanVendeeCategory
 from ..domain.admin.vendeeManagement import vendeeManagementService
+from ..domain.models_domain.vendeeModel import MoreVendee,VendeeBase
 
 # pesanan order management
-from ..domain.admin.pesananOrderManagement.pesananOrderManagementModel import SearchPesananOrder,OrdernWithVendeeServant,PesananWithVendeeServant,SearchPesananResponse,SearchOrderResponse,StatisticPesanan,StatisticOrder,ResponseOverviewPesanan,ResponseOverviewOrder
+from ..domain.admin.pesananOrderManagement.pesananOrderManagementModel import SearchPesananOrder,SearchPesananResponse,SearchOrderResponse,StatisticPesanan,StatisticOrder,ResponseOverviewPesanan,ResponseOverviewOrder
 from ..domain.admin.pesananOrderManagement import pesananOrderManagementService
-
+from ..domain.models_domain.pesananOrderModel import OrdernWithVendeeServant,PesananWithVendeeServant
 
 from ..utils.sessionDepedency import sessionDepedency
-from ..auth.adminAuthCookie import adminCookieAuth
+from ..auth.dependAuthMiddleware.adminAuthCookie import adminCookieAuth
 from fastapi import Depends,Body
 from typing import Annotated
 
@@ -70,7 +72,7 @@ async def getAllServant(session : sessionDepedency) :
     return await servantManagementService.getAllServants(session)
 
 @adminRouter.get("/servant/search",response_model=ResponseModel[SearchServantResponse],tags=["SERVANT/SERVANT_MANAGEMENT"])
-async def searchServant(page : int,filter : Annotated[SearchServant,Body(example={"username" : "habil","online": True,"ready_order" : True})] = SearchServant(),session : sessionDepedency = None) :
+async def searchServant(page : int,filter : Annotated[SearchServant,Body(examples=[{"username" : "habil","online": True,"ready_order" : True}])] = SearchServant(),session : sessionDepedency = None) :
     return await servantManagementService.searchServant(page,filter,session)
 
 @adminRouter.get("/servant/{id}",response_model=ResponseModel[MoreServantBase],tags=["SERVANT/SERVANT_MANAGEMENT"])
@@ -97,7 +99,7 @@ async def getAllVendee(session : sessionDepedency) :
     return await vendeeManagementService.getAllvendees(session)
 
 @adminRouter.get("/vendee/search",response_model=ResponseModel[SearchVendeeResponse],tags=["VENDEE/VENDEE_MANAGEMENT"])
-async def searchVendee(page : int,filter : Annotated[SearchVendee,Body(example={"username" : "habil","online" : True})] = SearchVendee(),session : sessionDepedency = None) :
+async def searchVendee(page : int,filter : Annotated[SearchVendee,Body(examples=[{"username" : "habil","online" : True}])] = SearchVendee(),session : sessionDepedency = None) :
     return await vendeeManagementService.searchvendee(page,filter,session)
 
 @adminRouter.get("/vendee/{id}",response_model=ResponseModel[MoreVendee],tags=["VENDEE/VENDEE_MANAGEMENT"])
@@ -163,11 +165,11 @@ async def deleteTujuanVendeeCategory(id : str,session : sessionDepedency) :
 
 # pesanan 
 @adminRouter.get("/pesanan/search",response_model=ResponseModel[SearchPesananResponse],tags=["PESANAN"])
-async def searchPesanan(page : int,filter : Annotated[SearchPesananOrder,Body(example={"servant" : "878654","vendee" : "985775","tugas" : "menitip barang","year" : 2024,"month" : 8,"day" : 16})] = SearchPesananOrder(),session : sessionDepedency = None) :
+async def searchPesanan(page : int,filter : Annotated[SearchPesananOrder,Body(examples=[{"servant" : "878654","vendee" : "985775","tugas" : "menitip barang","year" : 2024,"month" : 8,"day" : 16}])] = SearchPesananOrder(),session : sessionDepedency = None) :
     return await pesananOrderManagementService.searchPesanan(page,filter,session)
 
 @adminRouter.get("/pesanan/analitic/search",response_model=ResponseModel[StatisticPesanan],tags=["PESANAN"])
-async def searchAnaliticPesanan(filter : Annotated[SearchPesananOrder,Body(examples={"servant" : "878654","vendee" : "985775","tugas" : "menitip barang","year" : 2024,"month" : 8,"day" : 16})] = SearchPesananOrder(),session : sessionDepedency = None) :
+async def searchAnaliticPesanan(filter : Annotated[SearchPesananOrder,Body(examples=[{"servant" : "878654","vendee" : "985775","tugas" : "menitip barang","year" : 2024,"month" : 8,"day" : 16}])] = SearchPesananOrder(),session : sessionDepedency = None) :
     return await pesananOrderManagementService.searchStatisticPesanan(filter,session)
 
 @adminRouter.get("/pesanan/statistic/today",response_model=ResponseModel[StatisticPesanan],tags=["PESANAN"])
@@ -185,11 +187,11 @@ async def getPesananById(year : int,session : sessionDepedency = None) :
 
 # order
 @adminRouter.get("/order/search",response_model=ResponseModel[SearchOrderResponse],tags=["ORDER"])
-async def searchOrder(page : int,filter : Annotated[SearchPesananOrder,Body(example={"servant" : "878654","vendee" : "985775","tugas" : "menitip barang","year" : 2024,"month" : 8,"day" : 16})] = SearchPesananOrder(),session : sessionDepedency = None) :
+async def searchOrder(page : int,filter : Annotated[SearchPesananOrder,Body(examples=[{"servant" : "878654","vendee" : "985775","tugas" : "menitip barang","year" : 2024,"month" : 8,"day" : 16}])] = SearchPesananOrder(),session : sessionDepedency = None) :
     return await pesananOrderManagementService.searchOrder(page,filter,session)
 
 @adminRouter.get("/order/statistic/search",response_model=ResponseModel[StatisticOrder],tags=["ORDER"])
-async def searchStatisticOrder(filter : Annotated[SearchPesananOrder,Body(example={"servant" : "878654","vendee" : "985775","tugas" : "menitip barang","year" : 2024,"month" : 8,"day" : 16})] = SearchPesananOrder(),session : sessionDepedency = None) :
+async def searchStatisticOrder(filter : Annotated[SearchPesananOrder,Body(examples=[{"servant" : "878654","vendee" : "985775","tugas" : "menitip barang","year" : 2024,"month" : 8,"day" : 16}])] = SearchPesananOrder(),session : sessionDepedency = None) :
     return await pesananOrderManagementService.searchstatisticOrder(filter,session)
 
 @adminRouter.get("/order/{id}",response_model=ResponseModel[OrdernWithVendeeServant],tags=["ORDER"])

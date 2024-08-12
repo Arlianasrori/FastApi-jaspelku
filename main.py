@@ -8,11 +8,12 @@ load_dotenv("/.env")
 from src.error.errorHandling import add_exception_server
 from src.routes.authRouter import authRouter
 from src.routes.adminRouter import adminRouter
+from src.routes.servantRouter import servantRouter
 
 App = FastAPI(title="API SPEC FOR JASPELKU PROJECT",description="This is the api spec for jaspelku, it can be your guide in consuming the api. Please pay attention to the required fields in the api spec ini",servers=[{"url": "http://localhost:2008","description" : "development server"},],contact={"name" : "Habil Arlian Asrori","email" : "arlianasrori@gmail.com"})
 
 
-routes = [authRouter,adminRouter]
+routes = [authRouter,adminRouter,servantRouter]
 for router in routes :
     App.include_router(router)
 

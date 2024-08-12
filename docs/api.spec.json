@@ -141,7 +141,7 @@
 
         "tags : user/role" : true,
 
-        "/user/role" : {
+        "/auth/select/role" : {
             "summary": "update or add role to user",
             "put" : {
                 "parameters": [{
@@ -200,29 +200,27 @@
 
         "tags : user/tujuan" : true,
 
-        "/user/tujuan" : {
+        "/servant/tujuan" : {
             "post" : {
                 "parameters": [{
                     "$ref": "#/components/parameters/Authorization-Header"
                 }],
-                "tags": ["user/tujuan"],
+                "tags": ["servant/tujuan"],
                 "requestBody" : {
                     "content": {
                         "application/json" : {
                             "example" : {
-                                "id_tujuan" : "2345"
+                                "id_tujuan_servant_category" : "2345"
                             }
                         }
                     }
                 },
                 "responses": {
                     "200" : {
-                        "description": "response if add tujuan user succes",
+                        "description": "response if add vendee succes",
                         "content": {
                             "application/json" : {
-                                "examples" : {
-                                    "role_servant" : {
-                                        "value" : {
+                                "example" : {
                                             "msg" : "add tujuan user success",
                                             "data" : {
                                                 "id" : "2345",
@@ -244,31 +242,63 @@
                                                     }
                                                 }
                                             }
-                                        }
-                                    },
-                                    "role_vendee" : {
-                                        "value" : {
-                                            "msg" : "add tujuan user success",
+                                }
+                            }
+                        }
+                    },
+                    "404" : {
+                        "description": "response if tujuan is not found",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                    "msg" : "tujuan is not found"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/vendee/tujuan" : {
+            "post" : {
+                "parameters": [{
+                    "$ref": "#/components/parameters/Authorization-Header"
+                }],
+                "tags": ["vendee/tujuan"],
+                "requestBody" : {
+                    "content": {
+                        "application/json" : {
+                            "example" : {
+                                "id_tujuan_vendee_category" : "2345"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "response if add tujuan vendee succes",
+                        "content": {
+                            "application/json" : {
+                                "example" : {
+                                            "msg" : "add tujuan vendee success",
                                             "data" : {
                                                 "id" : "2345",
                                                 "username" : "habil",
                                                 "email" : "habil@gmail.com",
-                                                "detail_vendee" : {
+                                                "detail_servant" : {
                                                     "id" : "5432",
                                                     "deksripsi" : "siap membantu",
-                                                    "tujuan_vendee" : {
+                                                    "tujuan_servant" : {
                                                         "id" : "5431",
-                                                        "tujuan_vendee_category" : {
+                                                        "tujuan_servant_category" : {
                                                             "id" : "6789",
-                                                            "isi" : "ingin mencari jasa penitipan barang",
+                                                            "isi" : "siap membantu menitip barang",
                                                             "tujuan_user_category" : {
                                                                 "id" : "4567",
                                                                 "nama" : "menitip"
                                                             }
                                                         }
                                                     }
-                                                }
-                                            }
                                         }
                                     }
                                 }

@@ -1,5 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from .vendeeManagementModel import VendeeBase,AddVendee,AddAlamat,AddDetailVendee,Updatevendee,UpdateAlamat,UpdateDetailVendee,MoreVendee,SearchVendeeResponse,SearchVendee,TujuanVendeeCategoryBase,AddTujuanVendeeCategory,UpdateTujuanVendeeCategory
+from .vendeeManagementModel import AddVendee,AddAlamat,AddDetailVendee,Updatevendee,UpdateAlamat,UpdateDetailVendee,SearchVendeeResponse,SearchVendee,TujuanVendeeCategoryBase,AddTujuanVendeeCategory,UpdateTujuanVendeeCategory
+from ...models_domain.vendeeModel import MoreVendee,VendeeBase
+
+from ....models.pesananModel import Pesanan
+from ....models.servantModel import Detail_Servant
+
 from sqlalchemy import select,or_,and_,func
 from sqlalchemy.orm import joinedload
 from ....utils.updateTable import updateTable
@@ -11,6 +16,7 @@ from copy import deepcopy
 from types import NoneType
 import asyncio
 import math
+from ....auth import bcrypt
 
 async def add_vendee(vendee : AddVendee,alamat_vendee : AddAlamat,detail_vendee : AddDetailVendee, session : AsyncSession) -> VendeeBase :
     statementUser = await session.execute(select(User).where(or_(User.email == vendee.email,User.no_telepon == vendee.no_telepon)))
@@ -21,7 +27,8 @@ async def add_vendee(vendee : AddVendee,alamat_vendee : AddAlamat,detail_vendee 
     # add user with alamat
     vendeeMapping = vendee.model_dump()
     alamatMapping = alamat_vendee.model_dump()
-    vendeeMapping.update({"id" : str(random_strings.random_digits(6))})
+    hash_password = bcrypt.create_hash_password(vendeeMapping["password"])
+    vendeeMapping.update({"id" : str(random_strings.random_digits(6)),"password" : hash_password})
     alamatMapping.update({"id_user" : vendeeMapping["id"]})
     session.add(User(**vendeeMapping,alamat=Alamat_User(**alamatMapping)))
 
@@ -125,7 +132,7 @@ async def searchvendee(page : int,filter : SearchVendee,session : AsyncSession) 
     }
 
 async def getvendeeById(id : str,session : AsyncSession) -> MoreVendee:
-    moreDetailServantQueryOption = joinedload(User.vendee).options(joinedload(Detail_Vendee.pesanans),joinedload(Detail_Vendee.orders))
+    moreDetailServantQueryOption = joinedload(User.vendee).options(joinedload(Detail_Vendee.pesanans).options(joinedload(Pesanan.detail_servant).options(joinedload(Detail_Servant.servant),joinedload(Detail_Servant.pelayanan))),joinedload(Detail_Vendee.orders))
  
     statement = await session.execute(select(User).options(joinedload(User.alamat),moreDetailServantQueryOption).where(and_(User.id == id,User.role == RoleUser.vendee)))
     findDetailVendee = statement.scalars().first()

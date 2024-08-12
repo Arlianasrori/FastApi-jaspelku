@@ -1,7 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.asyncio import create_async_engine,async_sessionmaker
 import os
-from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 

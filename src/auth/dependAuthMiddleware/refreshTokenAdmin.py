@@ -1,8 +1,8 @@
 from fastapi import Cookie, Request
 
-from ..models.developerModels import Developer
-from ..error.errorHandling import HttpException
-from ..utils.sessionDepedency import sessionDepedency
+from ...models.developerModels import Developer
+from ...error.errorHandling import HttpException
+from ...utils.sessionDepedency import sessionDepedency
 from jose import JWTError, jwt
 import os
 

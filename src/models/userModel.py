@@ -1,5 +1,5 @@
 from ..db.database import Base
-from sqlalchemy import Column,String,Boolean,Enum,ForeignKey
+from sqlalchemy import Column, DateTime,String,Boolean,Enum,ForeignKey
 from sqlalchemy.orm import relationship
 from enum import Enum as enum
 
@@ -27,6 +27,7 @@ class User(Base) :
     vendee = relationship("Detail_Vendee",back_populates="vendee",uselist=False,cascade="all")
     notifikasi = relationship("Notifikasi",back_populates="user",cascade="all")
     notifikasi_read = relationship("Notifikasi_Read",back_populates="user",cascade="all")
+    OTP = relationship("OTPVerifyUser",backref="user",uselist=False,cascade="all")
 
 class Alamat_User(Base) :
     __tablename__ = "alamat_user"
@@ -58,9 +59,9 @@ class Location_Now(Base) :
 
 class OTPVerifyUser(Base) :
     __tablename__ = "OTP_User"
-    id_user = Column("user.id",ForeignKey("user.id",ondelete="CASCADE"),primary_key=True,nullable=False)
+    id_user = Column(String,ForeignKey("user.id",ondelete="CASCADE"),primary_key=True,nullable=False)
     OTP = Column(String(6),nullable=False)
-    expires = Column(String,nullable=False)
+    expires = Column(DateTime,nullable=False)
 
 class Tujuan_User_Category(Base) :
     __tablename__ = "tujuan_user_category"

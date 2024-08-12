@@ -1,46 +1,8 @@
 from pydantic import BaseModel,EmailStr
 from typing import Union
-from ..pesananOrderManagement.pesananOrderManagementModel import PesananBase,OrderBase
 from ....models.userModel import RoleUser
 from ....utils.BaseModelWithPhone import BaseModelWithPhoneValidation
-
-class AlamatBase(BaseModel) :
-    village : str
-    subdistrick : str
-    regency : str
-    province : str
-    country : str
-    latitude : Union[str | None] = None
-    longitude : Union[str | None] = None
-
-class PesananVendee(PesananBase) :
-    detail_servant : dict
-
-class OrderVendee(OrderBase) :
-    pesanan : PesananVendee
-
-class DetailVendeeBase(BaseModel) :
-    id : str
-    id_vendee : str
-    deskripsi : Union[str,None] = None
-    saldo : int
-
-class MoreDetailVendee(DetailVendeeBase) :
-    pesanans : Union[list[PesananVendee] | list] = []
-    orders  : Union[list[OrderVendee] | list] = []
-
-class VendeeBase(BaseModelWithPhoneValidation) : 
-    id : str
-    username : str
-    email : EmailStr
-    no_telepon : str
-    foto_profile : Union[str,None]
-    isVerify : bool
-    vendee : DetailVendeeBase 
-    alamat : AlamatBase
-
-class MoreVendee(VendeeBase) :
-    vendee : MoreDetailVendee
+from ...models_domain.vendeeModel import  VendeeBase,VendeeBase
 
 # add vendee model
 class AddDetailVendee(BaseModel) : 
@@ -52,7 +14,7 @@ class AddVendee(BaseModelWithPhoneValidation) :
     no_telepon : str
     password : str
     isVerify : bool = True
-    role : str = RoleUser.vendee
+    role : RoleUser = RoleUser.vendee
 
 class AddAlamat(BaseModel) :
     village : str

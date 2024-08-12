@@ -1,8 +1,8 @@
 from fastapi import Cookie, Request
 
-from ..models.developerModels import Developer
-from ..error.errorHandling import HttpException
-from ..utils.sessionDepedency import sessionDepedency
+from ...models.developerModels import Developer
+from ...error.errorHandling import HttpException
+from ...utils.sessionDepedency import sessionDepedency
 from jose import JWTError, jwt
 from sqlalchemy import select
 import os
@@ -27,4 +27,4 @@ async def adminCookieAuth(access_token : str | None = Cookie("access_token"),req
             raise HttpException(status=401,message="invalid token(unauthorized)")
         req.admin = findAdmin._asdict()
     except JWTError as error:
-       raise HttpException(status=401,message=error.args) 
+       raise HttpException(status=401,message=str(error.args[0])) 

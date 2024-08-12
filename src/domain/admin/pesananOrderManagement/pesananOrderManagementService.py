@@ -1,6 +1,8 @@
 from ....error.errorHandling import HttpException
 from ....models.pesananModel import Pesanan,Order,Status_Pesanan_Enum
-from .pesananOrderManagementModel import PesananWithVendeeServant,OrdernWithVendeeServant,SearchPesananOrder,SearchPesananResponse,StatisticPesanan,SearchOrderResponse,StatisticOrder,ResponseOverviewPesanan,ResponseOverviewOrder
+from .pesananOrderManagementModel import SearchPesananOrder,SearchPesananResponse,StatisticPesanan,SearchOrderResponse,StatisticOrder,ResponseOverviewPesanan,ResponseOverviewOrder
+
+from ...models_domain.pesananOrderModel import PesananWithVendeeServant,OrdernWithVendeeServant
 from ....models.vendeeModel import Detail_Vendee
 from ....models.servantModel import Detail_Servant
 from sqlalchemy.ext.asyncio import AsyncSession

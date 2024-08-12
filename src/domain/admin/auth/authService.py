@@ -30,8 +30,8 @@ def refresh_token(data,res : Response) :
     token_payload = {"sub" : data["username"]}
 
     token = create_token_admin(token_payload)
-    res.set_cookie("access_token",token["access_token"])
-    res.set_cookie("refresh_token",token["refresh_token"])
+    res.set_cookie("access_token",token["access_token"],httponly=True,max_age="24 * 60 * 60 * 60")
+    res.set_cookie("refresh_token",token["refresh_token"],httponly=True,max_age="24 * 60 * 60 * 60 * 60")
     return {
         "msg" : "succes",
         "data" : token

@@ -7,10 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ....models.servantModel import Pelayanan_Category,Tujuan_Servant_Category
 from .servantManagementModels import AddPelayananServantCategory,UpdatePelayananServantCategory,ResponsePelayananServantCategory
 from ....error.errorHandling import HttpException
-from .servantManagementModels import ServantBase,AddServant,AddDetailservant,AddAlamat,UpdateAlamat,UpdateServant,UpdateDetailservant,SearchServant,SearchServantResponse,MoreServantBase,AddTujuanServantCategory,UpdateTujuanServantCategory,TujuanServantCategoryBase
+from .servantManagementModels import AddServant,AddDetailservant,AddAlamat,UpdateAlamat,UpdateServant,UpdateDetailservant,SearchServant,SearchServantResponse,AddTujuanServantCategory,UpdateTujuanServantCategory
 from ....models.userModel import User,Alamat_User,RoleUser,Tujuan_User_Category
+from ...models_domain.servantModel import MoreServantBase,TujuanServantCategoryBase,ServantBase
 from ....models.servantModel import Detail_Servant
+from ....models.vendeeModel import Detail_Vendee
 from ....models.ratingModel import Rating
+from ....models.pesananModel import Pesanan
 from python_random_strings import random_strings
 from sqlalchemy.orm import joinedload
 from sqlalchemy import and_, select
@@ -18,6 +21,7 @@ from sqlalchemy.sql import or_
 from ....utils.updateTable import updateTable
 from copy import deepcopy
 from sqlalchemy import func
+from ....auth import bcrypt
 
 # pelayanan/jasa servant
 async def addPelayananServant(data : AddPelayananServantCategory,session : AsyncSession) -> ResponsePelayananServantCategory :
@@ -94,7 +98,9 @@ async def add_servant(servant : AddServant,alamat_servant : AddAlamat,detail_ser
     # add user with alamat
     servantMapping = servant.model_dump()
     alamatMapping = alamat_servant.model_dump()
-    servantMapping.update({"id" : str(random_strings.random_digits(6))})
+    # hashing password before store to database
+    hash_password = bcrypt.create_hash_password(servantMapping["password"])
+    servantMapping.update({"id" : str(random_strings.random_digits(6)),"password" : hash_password})
     alamatMapping.update({"id_user" : servantMapping["id"]})
     session.add(User(**servantMapping,alamat=Alamat_User(**alamatMapping)))
 
@@ -179,7 +185,7 @@ async def delete_servant(id : str, session : AsyncSession) -> ServantBase :
 async def getAllServants(session : AsyncSession) -> list[ServantBase] :
     statement = await session.execute(select(User).options(joinedload(User.alamat),joinedload(User.servant).options(joinedload(Detail_Servant.pelayanan))).where(User.role == RoleUser.servant))
     allServant = statement.scalars().all()
-    print(allServant)
+    print(allServant[0].__dict__)
     return {
         "msg" : "success",
         "data" : allServant
@@ -205,9 +211,9 @@ async def searchServant(page : int,filter : SearchServant,session : AsyncSession
     }
 
 async def getServantById(id : str,session : AsyncSession) -> MoreServantBase :
-    moreDetailServantQueryOption = joinedload(User.servant).options(joinedload(Detail_Servant.pelayanan),joinedload(Detail_Servant.tujuan_servant),joinedload(Detail_Servant.jadwal_pelayanan),joinedload(Detail_Servant.time_servant),joinedload(Detail_Servant.pesanans),joinedload(Detail_Servant.orders))
+    moreDetailServantQueryOption = joinedload(User.servant).options(joinedload(Detail_Servant.pelayanan),joinedload(Detail_Servant.tujuan_servant),joinedload(Detail_Servant.jadwal_pelayanan),joinedload(Detail_Servant.time_servant),joinedload(Detail_Servant.pesanans).options(joinedload(Pesanan.detail_vendee).options(joinedload(Detail_Vendee.vendee))),joinedload(Detail_Servant.orders))
  
-    statement = await session.execute(select(User,func.avg(Rating.rating).label("total rating")).select_from(User).join_from(User,Detail_Servant,User.id == Detail_Servant.id_servant,full=True).join_from(Detail_Servant,Rating,Rating.id_detail_servant == Detail_Servant.id,full=True).group_by(User,Detail_Servant).options(joinedload(User.alamat),moreDetailServantQueryOption).where(and_(User.id == id,User.role == RoleUser.vendee)))
+    statement = await session.execute(select(User,func.avg(Rating.rating).label("total rating")).select_from(User).join_from(User,Detail_Servant,User.id == Detail_Servant.id_servant,full=True).join_from(Detail_Servant,Rating,Rating.id_detail_servant == Detail_Servant.id,full=True).group_by(User,Detail_Servant).options(joinedload(User.alamat),moreDetailServantQueryOption).where(and_(User.id == id,User.role == RoleUser.servant)))
     findDetailServant = statement.first()
     
     if not findDetailServant :
@@ -218,7 +224,7 @@ async def getServantById(id : str,session : AsyncSession) -> MoreServantBase :
     servant = servantDict["User"]
     # move total rating to detail servant on user field
     servant.__dict__["servant"].__dict__.update({"rating" : servantDict["total rating"] if servantDict["total rating"] else 0 })
- 
+    # print?(servant.__dict__)
     return {
         "msg" : "succes",
         "data" : servant

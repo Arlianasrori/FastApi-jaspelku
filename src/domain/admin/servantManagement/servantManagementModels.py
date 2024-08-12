@@ -1,9 +1,8 @@
 from pydantic import BaseModel,EmailStr
 from typing import Union
-from ....models.servantModel import DayEnum
-from ..pesananOrderManagement.pesananOrderManagementModel import PesananBase,OrderBase
 from ....models.userModel import RoleUser
 from ....utils.BaseModelWithPhone import BaseModelWithPhoneValidation
+from ...models_domain.servantModel import ServantBase
 
 # pelayanan servant
 class AddPelayananServantCategory(BaseModel) :
@@ -16,73 +15,6 @@ class ResponsePelayananServantCategory(BaseModel) :
     id : str 
     name : str
 
-# servant
-class AlamatBase(BaseModel) :
-    village : str
-    subdistrick : str
-    regency : str
-    province : str
-    country : str
-    latitude : Union[str | None] = None
-    longitude : Union[str | None] = None
-
-class PelayananServantBase(BaseModel) :
-    id : str
-    name : str
-
-class TujuanServant(BaseModel) :
-    id : str
-    id_tujuan_servant_category : str
-    tujuan_servant_category : dict
-
-class JadwalPelayananServant(BaseModel) :
-    id : str
-    day : DayEnum
-
-class TimeServant(BaseModel) :
-    time : str
-
-class DetailServantBase(BaseModel) :
-    id : str
-    id_servant : str
-    deskripsi : str
-    saldo : int
-    ready_order : bool
-    pelayanan : PelayananServantBase
-
-class PesananServant(PesananBase) :
-    detail_vendee : dict
-
-class OrderServant(OrderBase) :
-    pesanan : PesananServant
-
-class MoreDetailServant(DetailServantBase) :
-    tujuan_servant : TujuanServant | None = None
-    jadwal_pelayanan : list[JadwalPelayananServant] | list= []
-    time_servant : TimeServant | None = None 
-    rating : int
-    pesanans : list[PesananServant] | list = []
-    orders : list[OrderServant] | list = []
-
-
-class ServantBase(BaseModelWithPhoneValidation) : 
-    id : str
-    username : str
-    email : EmailStr
-    no_telepon : str
-    foto_profile : Union[str,None]
-    isVerify : bool
-    servant : DetailServantBase 
-    alamat : AlamatBase
-
-class MoreServantBase(ServantBase) :
-    servant : MoreDetailServant 
-
-# tujuan servant category
-class TujuanServantCategoryBase(BaseModel) :
-    id : str
-    id_tujuan_user_category : str
-    isi : str
 
 # add
 class AddDetailservant(BaseModel) : 
@@ -95,7 +27,7 @@ class AddServant(BaseModelWithPhoneValidation) :
     no_telepon : str
     password : str
     isVerify : bool = True
-    role : str = RoleUser.servant
+    role : RoleUser = RoleUser.servant
 
 class AddAlamat(BaseModel) :
     village : str

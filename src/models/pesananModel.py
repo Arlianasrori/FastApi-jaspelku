@@ -10,6 +10,7 @@ class Status_Pesanan_Enum(enum) :
     dibatalkan_vendee = "dibatalkan_vendee"
     dibatalkan_servant = "dibatalkan_servant"
     selesai = "selesai"
+    rejected = "rejected"
 
 class Pesanan(Base) :
     __tablename__ = "pesanan"
@@ -27,9 +28,7 @@ class Pesanan(Base) :
     price_outside = Column(Integer,default=0)
     other_price = Column(Integer,default=0)
     isPay = Column(Boolean,default=False)
-    approved = Column(Boolean,default=False)
-    allowPayLater = Column(Boolean,default=False)
-    isPayLater = Column(Boolean,default=False)
+    approved = Column(Boolean)
 
     detail_servant = relationship("Detail_Servant",back_populates="pesanans")
     detail_vendee = relationship("Detail_Vendee",back_populates="pesanans")

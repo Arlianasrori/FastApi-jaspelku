@@ -25,16 +25,16 @@ def add_exception_server(App : FastAPI) :
             content=jsonable_encoder({"msg" : exc.args}),
         )
 
-    @App.exception_handler(RequestValidationError)
-    async def validation_exception_handler(request, exc : RequestValidationError):
-        return JSONResponse(
-            status_code=400,
-            content={"msg" : exc.args[0][0]["msg"]},
-        )
-    @App.exception_handler(ResponseValidationError)
-    async def validation_exception_handler(request, exc : ResponseValidationError):
-        print(exc.__dict__["_errors"][0]["msg"])
-        return JSONResponse(
-            status_code=400,
-            content={"msg" : exc.__dict__["_errors"][0]["msg"]},
-        )
+    # @App.exception_handler(RequestValidationError)
+    # async def validation_exception_handler(request, exc : RequestValidationError):
+    #     return JSONResponse(
+    #         status_code=400,
+    #         content={"msg" : exc.args[0][0]["msg"]},
+    #     )
+    # @App.exception_handler(ResponseValidationError)
+    # async def validation_exception_handler(request, exc : ResponseValidationError):
+    #     print(exc.__dict__["_errors"][0]["msg"])
+    #     return JSONResponse(
+    #         status_code=400,
+    #         content={"msg" : exc.__dict__["_errors"][0]["msg"]},
+    #     )

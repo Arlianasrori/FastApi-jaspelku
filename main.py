@@ -1,5 +1,6 @@
 import asyncio
 from fastapi import FastAPI
+from starlette.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from dotenv import load_dotenv
@@ -9,8 +10,9 @@ from src.error.errorHandling import add_exception_server
 from src.routes.authRouter import authRouter
 from src.routes.adminRouter import adminRouter
 from src.routes.servantRouter import servantRouter
+from src.routes.generalUserEndpoint import addGeneralUserEndpoint
 
-App = FastAPI(title="API SPEC FOR JASPELKU PROJECT",description="This is the api spec for jaspelku, it can be your guide in consuming the api. Please pay attention to the required fields in the api spec ini",servers=[{"url": "http://localhost:2008","description" : "development server"},],contact={"name" : "Habil Arlian Asrori","email" : "arlianasrori@gmail.com"})
+App = FastAPI(title="API SPEC FOR JASPELKU PROJECT",description="This is the api spec for jaspelku, it can be your guide in consuming the api. Please pay attention to the required fields in the api spec ini",servers=[{"url": "http://localhost:2008","description" : "development server"}],contact={"name" : "Habil Arlian Asrori","email" : "arlianasrori@gmail.com"})
 
 
 routes = [authRouter,adminRouter,servantRouter]
@@ -29,9 +31,12 @@ App.add_middleware(
     allow_headers=["*"],
 )
 
+App.mount("/foto_profile_user",StaticFiles(directory="src/public/user_foto_profile"),name="static")
+
 add_exception_server(App)
 async def runServer() :
     uvicorn.run(app="main:App",port=2008,reload=True)
+addGeneralUserEndpoint(App)
 
 if __name__ == "__main__" :
     asyncio.run(runServer())

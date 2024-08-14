@@ -16,9 +16,7 @@ class PesananBase(BaseModel) :
     price_outside : int
     other_price : int
     isPay : bool
-    approved : bool
-    allowPayLater : bool
-    isPayLater : bool
+    approved : bool | None = None
 
 class OrderBase(BaseModel) :
     id : str
@@ -31,7 +29,6 @@ class PesananServant(BaseModel) :
     id : str
     id_servant : str
     deskripsi : str
-    saldo : int
     ready_order : bool
     pelayanan : dict | None 
     servant : UserBase
@@ -53,11 +50,13 @@ class PesananVendee(BaseModel) :
     id : str
     id_vendee : str
     deskripsi : Union[str,None] = None
-    saldo : int
     vendee : UserBase
 
 class PesananWithVendeeServant(PesananBase) :
     detail_servant : PesananServant
+    detail_vendee : PesananVendee
+
+class PesananWithVendee(PesananBase) :
     detail_vendee : PesananVendee
 
 class OrdernWithVendeeServant(OrderBase) :

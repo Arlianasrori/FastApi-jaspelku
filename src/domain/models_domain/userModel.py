@@ -8,6 +8,7 @@ class UserBase(BaseModelWithPhoneValidation) :
     email : EmailStr
     no_telepon : str
     foto_profile : Union[str | None] = None
+    saldo : int
 
 class AlamatBase(BaseModel) :
     village : str

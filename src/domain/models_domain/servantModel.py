@@ -1,4 +1,3 @@
-from operator import itemgetter
 from pydantic import BaseModel,EmailStr, Field, field_validator
 from typing import Union
 from ...models.servantModel import DayEnum
@@ -32,7 +31,6 @@ class DetailServantBase(BaseModel) :
     id : str
     id_servant : str
     deskripsi : str
-    saldo : int
     ready_order : bool   
     pass_test : bool
     pelayanan : PelayananServantBase
@@ -73,3 +71,31 @@ class TujuanServantCategoryBase(BaseModel) :
     id : str
     id_tujuan_user_category : str
     isi : str
+
+class ServantWithOutDetail(BaseModelWithPhoneValidation) :
+    id : str
+    username : str
+    email : EmailStr
+    no_telepon : str
+    foto_profile : Union[str,None]
+    isVerify : bool
+    alamat : AlamatBase | None = None
+
+class DetailServantWihtServant(DetailServantBase) :
+    servant : ServantWithOutDetail
+
+class DetailServantWithOutPelayanan(BaseModel) :
+    id : str
+    id_servant : str
+    deskripsi : str
+    ready_order : bool   
+    pass_test : bool
+
+class ServantWithOutAlamat(BaseModelWithPhoneValidation) :
+    id : str
+    username : str
+    email : EmailStr
+    no_telepon : str
+    foto_profile : Union[str,None]
+    isVerify : bool
+    servant : DetailServantWithOutPelayanan

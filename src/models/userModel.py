@@ -1,5 +1,5 @@
 from ..db.database import Base
-from sqlalchemy import Column, DateTime,String,Boolean,Enum,ForeignKey
+from sqlalchemy import Column, DateTime,String,Boolean,Enum,ForeignKey,Integer
 from sqlalchemy.orm import relationship
 from enum import Enum as enum
 
@@ -20,6 +20,7 @@ class User(Base) :
     token_FCM = Column(String,nullable=True)
     role = Column(Enum(RoleUser),nullable=True)
     online = Column(Boolean,default=False)
+    saldo  = Column(Integer,default=0)
 
     alamat = relationship("Alamat_User",back_populates="user",uselist=False,cascade="all")
     location_now = relationship("Location_Now",back_populates="user",cascade="all")

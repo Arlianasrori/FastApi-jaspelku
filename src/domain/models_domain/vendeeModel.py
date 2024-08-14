@@ -14,7 +14,6 @@ class DetailVendeeBase(BaseModel) :
     id : str
     id_vendee : str
     deskripsi : Union[str,None] = None
-    saldo : int
 
 class MoreDetailVendee(DetailVendeeBase) :
     pesanans : list[PesananVendee] = []
@@ -30,5 +29,17 @@ class VendeeBase(BaseModelWithPhoneValidation) :
     vendee : DetailVendeeBase 
     alamat : Union[AlamatBase,None] = None
 
+class VendeeWithOutDetail(BaseModelWithPhoneValidation) :
+    id : str
+    username : str
+    email : EmailStr
+    no_telepon : str
+    foto_profile : Union[str,None]
+    isVerify : bool
+    alamat : Union[AlamatBase,None] = None
+
 class MoreVendee(VendeeBase) :
     vendee : MoreDetailVendee
+
+class DetailVendeetWihtVendee(DetailVendeeBase) :
+    vendee : VendeeWithOutDetail

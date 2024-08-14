@@ -25,7 +25,6 @@ class Detail_Servant(Base) :
     id = Column(String,primary_key=True,nullable=False)
     id_servant = Column(String,ForeignKey("user.id",ondelete="CASCADE"),unique=True,nullable=False)
     deskripsi = Column(String,nullable=True)
-    saldo  = Column(Integer,default=0)
     ready_order = Column(Boolean,default=False)
     id_pelayanan = Column(String,ForeignKey("pelayanan_category.id"),nullable=False)
     pass_test = Column(Boolean,default=False)
@@ -36,7 +35,7 @@ class Detail_Servant(Base) :
     jadwal_pelayanan = relationship("Jadwal_Pelayanan",back_populates="detail_servant",cascade="all")
     time_servant = relationship("Time_Servant",back_populates="detail_servant",uselist=False,cascade="all")
     ratings = relationship("Rating",back_populates="detail_servant",cascade="all")
-    pesanans = relationship("Pesanan",back_populates="detail_servant",cascade="all",lazy="selectin")
+    pesanans = relationship("Pesanan",back_populates="detail_servant",cascade="all")
     orders = relationship("Order",back_populates="detail_servant",cascade="all")
 
 class Tujuan_Servant_Category(Base) :

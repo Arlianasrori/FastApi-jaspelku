@@ -10,10 +10,10 @@ from ....error.errorHandling import HttpException
 from .servantManagementModels import AddServant,AddDetailservant,AddAlamat,UpdateAlamat,UpdateServant,UpdateDetailservant,SearchServant,SearchServantResponse,AddTujuanServantCategory,UpdateTujuanServantCategory
 from ....models.userModel import User,Alamat_User,RoleUser,Tujuan_User_Category
 from ...models_domain.servantModel import MoreServantBase,TujuanServantCategoryBase,ServantBase
-from ....models.servantModel import Detail_Servant
+from ....models.servantModel import Detail_Servant,Tujuan_Servant
 from ....models.vendeeModel import Detail_Vendee
 from ....models.ratingModel import Rating
-from ....models.pesananModel import Pesanan
+from ....models.pesananModel import Pesanan,Order
 from python_random_strings import random_strings
 from sqlalchemy.orm import joinedload
 from sqlalchemy import and_, select
@@ -211,7 +211,7 @@ async def searchServant(page : int,filter : SearchServant,session : AsyncSession
     }
 
 async def getServantById(id : str,session : AsyncSession) -> MoreServantBase :
-    moreDetailServantQueryOption = joinedload(User.servant).options(joinedload(Detail_Servant.pelayanan),joinedload(Detail_Servant.tujuan_servant),joinedload(Detail_Servant.jadwal_pelayanan),joinedload(Detail_Servant.time_servant),joinedload(Detail_Servant.pesanans).options(joinedload(Pesanan.detail_vendee).options(joinedload(Detail_Vendee.vendee))),joinedload(Detail_Servant.orders))
+    moreDetailServantQueryOption = joinedload(User.servant).options(joinedload(Detail_Servant.pelayanan),joinedload(Detail_Servant.tujuan_servant).options(joinedload(Tujuan_Servant.tujuan_servant_category)),joinedload(Detail_Servant.jadwal_pelayanan),joinedload(Detail_Servant.time_servant),joinedload(Detail_Servant.pesanans).options(joinedload(Pesanan.detail_vendee).options(joinedload(Detail_Vendee.vendee))),joinedload(Detail_Servant.orders).options(joinedload(Order.pesanan).options(joinedload(Pesanan.detail_vendee).options(joinedload(Detail_Vendee.vendee)))))
  
     statement = await session.execute(select(User,func.avg(Rating.rating).label("total rating")).select_from(User).join_from(User,Detail_Servant,User.id == Detail_Servant.id_servant,full=True).join_from(Detail_Servant,Rating,Rating.id_detail_servant == Detail_Servant.id,full=True).group_by(User,Detail_Servant).options(joinedload(User.alamat),moreDetailServantQueryOption).where(and_(User.id == id,User.role == RoleUser.servant)))
     findDetailServant = statement.first()

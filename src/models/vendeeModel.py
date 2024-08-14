@@ -7,7 +7,6 @@ class Detail_Vendee(Base) :
     id = Column(String,primary_key=True,nullable=False)
     id_vendee = Column(String,ForeignKey("user.id",ondelete="CASCADE"),nullable=False)
     deskripsi = Column(String,nullable=True)
-    saldo = Column(Integer,default=0)
 
     vendee = relationship("User",back_populates="vendee")
     tujuan_vendee = relationship("Tujuan_Vendee",back_populates="detail_vendee")

@@ -12,7 +12,7 @@ class PesananBase(BaseModel) :
     order_estimate : str
     status : Status_Pesanan_Enum
     tugas : str
-    total_price : int
+    price : int
     price_outside : int
     other_price : int
     isPay : bool
@@ -40,7 +40,8 @@ class PesananServant(BaseModel) :
             return None
         return {
             "id" : raw.__dict__["id"],
-            "name" : raw.__dict__["name"]
+            "name" : raw.__dict__["name"],
+            "price" : raw.__dict__["price"]
         }
 
     class Config:
@@ -58,6 +59,9 @@ class PesananWithVendeeServant(PesananBase) :
 
 class PesananWithVendee(PesananBase) :
     detail_vendee : PesananVendee
+
+class PesananWithServant(PesananBase) :
+    detail_servant : PesananServant
 
 class OrdernWithVendeeServant(OrderBase) :
     detail_servant : PesananServant

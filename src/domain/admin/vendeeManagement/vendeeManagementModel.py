@@ -2,7 +2,7 @@ from pydantic import BaseModel,EmailStr
 from typing import Union
 from ....models.userModel import RoleUser
 from ....utils.BaseModelWithPhone import BaseModelWithPhoneValidation
-from ...models_domain.vendeeModel import  VendeeBase,VendeeBase
+from ...models_domain.vendeeModel import  VendeeBase,VendeeBase,TujuanVendeeCategoryBase
 
 # add vendee model
 class AddDetailVendee(BaseModel) : 
@@ -28,6 +28,7 @@ class AddAlamat(BaseModel) :
 # update vendee model
 class UpdateDetailVendee(BaseModel) : 
     deskripsi : Union[str | None] = None
+    work : Union[str | None] = None
 
 class Updatevendee(BaseModelWithPhoneValidation) :
     username : Union[str | None] = None
@@ -55,10 +56,7 @@ class SearchVendeeResponse(BaseModel) :
     count_page : int
 
 # tujuan vendee category
-class TujuanVendeeCategoryBase(BaseModel) :
-    id : str
-    id_tujuan_user_category : str
-    isi : str
+
 
 class AddTujuanVendeeCategory(BaseModel) :
     id_tujuan_user_category : str

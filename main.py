@@ -6,16 +6,18 @@ import uvicorn
 from dotenv import load_dotenv
 load_dotenv("/.env")
 
+from src.socket.socket import socket_app,connetDisconnectSocket,cleanup
 from src.error.errorHandling import add_exception_server
 from src.routes.authRouter import authRouter
 from src.routes.adminRouter import adminRouter
 from src.routes.servantRouter import servantRouter
-from src.routes.generalUserEndpoint import addGeneralUserEndpoint
+from src.routes.vendeeRouter import vendeeRouter
+from src.routes.userRouter import userRouter
 
 App = FastAPI(title="API SPEC FOR JASPELKU PROJECT",description="This is the api spec for jaspelku, it can be your guide in consuming the api. Please pay attention to the required fields in the api spec ini",servers=[{"url": "http://localhost:2008","description" : "development server"}],contact={"name" : "Habil Arlian Asrori","email" : "arlianasrori@gmail.com"})
 
 
-routes = [authRouter,adminRouter,servantRouter]
+routes = [authRouter,adminRouter,servantRouter,vendeeRouter,userRouter]
 for router in routes :
     App.include_router(router)
 
@@ -32,11 +34,17 @@ App.add_middleware(
 )
 
 App.mount("/foto_profile_user",StaticFiles(directory="src/public/user_foto_profile"),name="static")
+App.mount("/",app=socket_app)
 
 add_exception_server(App)
+connetDisconnectSocket()
+
+@App.on_event("shutdown")
+async def shutdown_event():
+    await cleanup()
 async def runServer() :
     uvicorn.run(app="main:App",port=2008,reload=True)
-addGeneralUserEndpoint(App)
+
 
 if __name__ == "__main__" :
     asyncio.run(runServer())

@@ -1,15 +1,16 @@
+from fastapi import WebSocketException
 from copy import deepcopy
 from sqlalchemy import select,and_,func
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .servantModel import AddDetailServant,ResponseAddUpdateDetailServant,ResponseProfilServant,ResponseGetServant,UpdateProfileServant,ResponseRatingsServant,ResponseGetRatingById,ResponseGetPesanans,ResponseGetPesananBYId
+from .servantModel import AddDetailServant,ResponseAddUpdateDetailServant, ResponseDetailProfileServant,ResponseProfilServant,ResponseGetServant,UpdateProfileServant,ResponseRatingsServant,ResponseGetRatingById,ResponseGetPesanans,ResponseGetPesananBYId,AddUpdateLocationNowBody,ResponseAddUpdateLocationNow
 from ..models_domain.servantModel import ServantBase,ServantWithOutAlamat
 
-from ...error.errorHandling import HttpException
+from ...error.errorHandling import HttpException,SocketException
 
 from ...models.servantModel import Detail_Servant,Pelayanan_Category,Tujuan_Servant_Category,Time_Servant,Jadwal_Pelayanan,Tujuan_Servant
-from ...models.userModel import User,Alamat_User
+from ...models.userModel import User,Alamat_User,Location_Now
 from ...models.pesananModel import Pesanan,Status_Pesanan_Enum
 from ...models.ratingModel import Rating
 from ...models.vendeeModel import Detail_Vendee
@@ -17,6 +18,7 @@ from ...models.vendeeModel import Detail_Vendee
 from python_random_strings import random_strings
 
 from ...utils.updateTable import updateTable
+
 
 # profile and detail
 async def addDetailServant(id_user : str, detail_servant : AddDetailServant,session : AsyncSession) -> ResponseAddUpdateDetailServant :
@@ -44,8 +46,8 @@ async def addDetailServant(id_user : str, detail_servant : AddDetailServant,sess
     alamat_mapping.update({"id_user" : id_user})
 
     # find tujuan servant category
-    statementPelayananCategory = await session.execute(select(Tujuan_Servant_Category).where(Tujuan_Servant_Category.id == detail_servant.id_tujuan_servant_category))
-    findTujuanServantCategory = statementPelayananCategory.scalars().first()
+    statementTujuannCategory = await session.execute(select(Tujuan_Servant_Category).where(Tujuan_Servant_Category.id == detail_servant.id_tujuan_servant_category))
+    findTujuanServantCategory = statementTujuannCategory.scalars().first()
     if not findTujuanServantCategory :
         raise HttpException(status=404,message="tujuan tidak ditemukan")
     
@@ -144,10 +146,13 @@ async def updateProfileServant(id_user : str,updateServant : UpdateProfileServan
     }
 
 # home
-async def getDetailProfileServant(id_user : str,session : AsyncSession) :
+async def getDetailProfileServant(id_user : str,session : AsyncSession) -> ResponseDetailProfileServant:
     moreDetailServantQueryOption = joinedload(User.servant).options(joinedload(Detail_Servant.pelayanan),joinedload(Detail_Servant.tujuan_servant).options(joinedload(Tujuan_Servant.tujuan_servant_category)),joinedload(Detail_Servant.jadwal_pelayanan),joinedload(Detail_Servant.time_servant))
     statementGetServant = await session.execute(select(User,func.avg(Rating.rating).label("total rating")).select_from(User).join_from(User,Detail_Servant,User.id == Detail_Servant.id_servant,full=True).join_from(Detail_Servant,Rating,Rating.id_detail_servant == Detail_Servant.id,full=True).group_by(User,Detail_Servant).options(joinedload(User.alamat),moreDetailServantQueryOption).where(User.id == id_user))
     findDetailServant = statementGetServant.first()
+
+    if not findDetailServant :
+        raise HttpException(404,"servant tidak ditemukan")
 
     servantDict = findDetailServant._asdict()
 
@@ -159,9 +164,7 @@ async def getDetailProfileServant(id_user : str,session : AsyncSession) :
     findAnalisis = statementGetStatisticPesanan.first()
 
     # move total rating and statistik penjualan to detail servant on user field
-    # print?(servant.__dict__)
     servant.__dict__["servant"].__dict__.update({"rating" : servantDict["total rating"] if servantDict["total rating"] else 0 ,"statistik_penjualan" : findAnalisis._asdict()})
-    print(findAnalisis._asdict())
 
     return {
         "msg" : "success",
@@ -183,8 +186,11 @@ async def getRatings(id_user : str,session : AsyncSession) -> ResponseRatingsSer
 async def getRatingById(id_rating : str,session : AsyncSession) -> ResponseGetRatingById :
     vendeeLoad = joinedload(Rating.detail_vendee).options(joinedload(Detail_Vendee.vendee).options(joinedload(User.alamat)))
     servantLoad = joinedload(Rating.detail_servant).options(joinedload(Detail_Servant.pelayanan),joinedload(Detail_Servant.servant).options(joinedload(User.alamat)))
-    statementGetRating = await session.execute(select(Rating).options(vendeeLoad,servantLoad))
+    statementGetRating = await session.execute(select(Rating).options(vendeeLoad,servantLoad).where(Rating.id == id_rating))
     getRating = statementGetRating.scalars().first()
+
+    if not getRating :
+        raise HttpException(404,"data rating tidak ditemukan")
 
     return {
         "msg" : "success",
@@ -206,7 +212,7 @@ async def getServant(id_user : str,session : AsyncSession) -> ResponseGetServant
 
 # pesanan
 async def getPesanans(id_user : str,status_pesanan : Status_Pesanan_Enum | None,session : AsyncSession) -> ResponseGetPesanans :
-    statementGetPesanan = await session.execute(select(User).options(joinedload(User.servant).options(joinedload(Detail_Servant.pelayanan),joinedload(Detail_Servant.pesanans.and_(Pesanan.status == status_pesanan.value))),joinedload(User.alamat)).where(User.id == id_user))
+    statementGetPesanan = await session.execute(select(User).options(joinedload(User.servant).options(joinedload(Detail_Servant.pelayanan),joinedload(Detail_Servant.pesanans.and_(Pesanan.status == status_pesanan.value if status_pesanan else True)).joinedload(Pesanan.detail_vendee).joinedload(Detail_Vendee.vendee)),joinedload(User.alamat)).where(User.id == id_user))
     getPesanans = statementGetPesanan.scalars().first()
 
     return {
@@ -215,6 +221,7 @@ async def getPesanans(id_user : str,status_pesanan : Status_Pesanan_Enum | None,
     }
 
 async def getPesananById(id_pesanan : str,session : AsyncSession) -> ResponseGetPesananBYId :
+    # select servant to use on get user later
     statementGetPesanan = await session.execute(select(Pesanan).options(joinedload(Pesanan.detail_vendee).joinedload(Detail_Vendee.vendee),joinedload(Pesanan.detail_servant)).where(Pesanan.id == id_pesanan))
     getPesanan = statementGetPesanan.scalars().first()
 
@@ -283,8 +290,6 @@ async def approvedPesananServant(id_pesanan : str,id_user : str,approved : bool,
     getPesanan.approved = approved
     if not approved :
         getPesanan.status = Status_Pesanan_Enum.rejected
-    else :
-        getPesanan.status = Status_Pesanan_Enum.proses
     # add pesanan to getUser object in order to same with responseModel
     getUserCopy = deepcopy(getUser)
     getUserCopy.__dict__["servant"].__dict__.update({"pesanan" : deepcopy(getPesanan.__dict__)})
@@ -323,3 +328,31 @@ async def updateReadyOrder(isReady : bool,id_user : str,session : AsyncSession) 
         "msg" : "success",
         "data" : getDetailServantCopy
     }
+
+
+# location now
+async def addUpdateLocationNow(id_user : str,location : dict,session : AsyncSession) -> ResponseAddUpdateLocationNow :
+    getUser = (await session.execute(select(User).options(joinedload(User.location_now)).where(User.id == id_user))).scalars().first()
+
+    if not getUser :
+        raise WebSocketException(404,"user tidak ditemukan")
+    
+    if getUser.location_now :
+        updateTable(location,getUser.location_now)
+    else :
+        locationMapping = location.model_dump()
+        locationMapping.update({"id_user" : id_user})
+        session.add(Location_Now(**locationMapping))
+
+    locationCopy = deepcopy(getUser.location_now.__dict__)
+    await session.commit()
+
+    return {
+        "msg" : "success",
+        "data" : {
+            "id_user" : id_user,
+            "latitude" : locationCopy["latitude"],
+            "longitude" : locationCopy["longitude"]
+        }
+    }
+

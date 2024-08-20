@@ -1,8 +1,8 @@
 from pydantic import BaseModel
-from ..models_domain.servantModel import ServantBase,DetailServantWithoutRatingPesananOrder,DetailServantBase,TujuanServant,JadwalPelayananServant,TimeServant,DetailServantWihtServant
-from ..models_domain.vendeeModel import DetailVendeeBase,DetailVendeetWihtVendee
+from ..models_domain.servantModel import ServantBase,DetailServantWithoutRatingPesananOrder,DetailServantBase,TujuanServant,JadwalPelayananServant,TimeServant,DetailServantWihtServant,DetailServantWithRating,RatingServant
+from ..models_domain.vendeeModel import DetailVendeetWihtVendee
 from ..models_domain.pesananOrderModel import PesananBase,PesananWithVendee
-from ..models_domain.userModel import AlamatBase
+from ..models_domain.userModel import AlamatBase,UpdateAlamat
 from ...models.servantModel import DayEnum
 from ...models.servantModel import DayEnum
 from enum import Enum
@@ -31,21 +31,12 @@ class ResponseGetServant(ServantBase) :
 class UpdateJadwalServant(BaseModel) :
     day : DayEnum
     isDelete : bool
-    
-class UpdateAlamatServant(BaseModel) :
-    village : str | None = None
-    subdistrick : str | None = None
-    regency : str | None = None
-    province : str | None = None
-    country : str | None = None
-    latitude : str | None = None
-    longitude : str | None = None
 
 class UpdateProfileServant(BaseModel) :
     timeServant : str | None = None
     deskripsi : str | None = None
     id_pelayanan : str | None = None
-    alamat : UpdateAlamatServant | None = None
+    alamat : UpdateAlamat | None = None
     jadwal : list[UpdateJadwalServant] | None = None
 
 class StatistikPenjualan(BaseModel) :
@@ -65,17 +56,6 @@ class DetailProfileServant(DetailServantBase) :
     
 class ResponseDetailProfileServant(ServantBase) :
     servant : DetailProfileServant
-    
-class RatingServant(BaseModel) :
-    id : str
-    rating : int
-    isi : str
-    detail_vendee : DetailVendeeBase
-
-class DetailServantWithRating(BaseModel) :
-    id : str
-    deskripsi : str
-    ratings : list[RatingServant]
 
 class ResponseRatingsServant(ServantBase) :
     servant : DetailServantWithRating
@@ -87,8 +67,10 @@ class ResponseGetRatingById(RatingServant) :
     detail_vendee : DetailVendeetWihtVendee
     detail_servant : DetailServantWihtServant
 
+
+# pesanan
 class DetailServantWithPesanan(DetailServantBase) :
-    pesanans : list[PesananBase] 
+    pesanans : list[PesananWithVendee] 
 
 class DetailServantWithPesananDict(DetailServantBase) :
     pesanan : PesananWithVendee 
@@ -104,3 +86,14 @@ class ResponseGetPesananBYId(BaseModel) :
     username : str
     email : str
     servant : DetailServantWithPesananDict
+
+
+# location now 
+class AddUpdateLocationNowBody(BaseModel) :
+    latitude : str
+    longitude : str
+
+class ResponseAddUpdateLocationNow(BaseModel) :
+    id_user : str
+    latitude : str
+    longitude : str

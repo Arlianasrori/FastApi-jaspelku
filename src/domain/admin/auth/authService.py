@@ -25,7 +25,13 @@ async def login(data : LoginModel,Session : AsyncSession,res : Response) :
         "msg" : "succes",
         "data" : token
     }
+def logout(Res : Response) :
+    Res.delete_cookie("access_token")
+    Res.delete_cookie("refresh_token")
 
+    return {
+        "msg" : "success"
+    }
 def refresh_token(data,res : Response) :
     token_payload = {"sub" : data["username"]}
 

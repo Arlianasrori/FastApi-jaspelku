@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, Request, Response
 
 from ..domain.admin.auth.authModels import LoginModel,ResponseLoginAdmin
-from ..domain.admin.auth.authService import login,refresh_token
+from ..domain.admin.auth.authService import login,refresh_token,logout
 from ..utils.sessionDepedency import sessionDepedency
 from ..auth.dependAuthMiddleware.refreshTokenAdmin import refresh_token_auth
 from ..auth.dependAuthMiddleware.userAuthDepends import userAuthDepends
 from ..auth.dependAuthMiddleware.getUserDepends import GetUserDepends
 from ..auth.dependAuthMiddleware.refreshTokenUser import refreshTokenUser
+from ..auth.dependAuthMiddleware.adminAuthCookie import adminCookieAuth
 
 from ..models.responseModel import ResponseModel
 
@@ -24,6 +25,16 @@ async def adminLogin(data : LoginModel,res : Response,session : sessionDepedency
 @authRouter.post("/admin/refresh_token",dependencies=[Depends(refresh_token_auth)],response_model=ResponseModel[ResponseLoginAdmin],tags=["AUTH/ADMIN"])
 def adminLogin(req : Request,res : Response) :
     return refresh_token(req.refresh_admin,res)
+
+@authRouter.post("/admin/logout",dependencies=[Depends(adminCookieAuth)],tags=["AUTH/ADMIN"])
+def adminLogin(res : Response) :
+    return logout(res)
+
+@authRouter.get("/admin/getAdmin",dependencies=[Depends(adminCookieAuth)],tags=["AUTH/ADMIN"])
+def adminLogin(Req : Request) :
+    return {
+        "username" : Req.admin["username"]
+    }
 
 # user
 @authRouter.post("/user/register",response_model=ResponseModel[RegisterResponse],tags=["AUTH/USER"])
@@ -96,7 +107,7 @@ async def getUser(session : sessionDepedency,user : dict = Depends(GetUserDepend
 
 @authRouter.get("/user/refresh_token",response_model=ResponseModel[ResponseRefreshToken],dependencies=[Depends(refreshTokenUser)],description="""
 used to get user data. if verify equal is false. the frontend can direct the user to the verification page and call send OTP to send the OTP. if the role on the user is equal null the frontend can direct the user to the select user role page.
-This route is used before the user has a role""",tags=["AUTH/USER"])
+This route is used before the user has a role or use to get user data beforenadd profile""",tags=["AUTH/USER"])
 async def getUser(session : sessionDepedency,res : Response,user : dict = Depends(GetUserDepends)) :
     print("alit")
     return await authService.refresh_token(user,res,session)

@@ -16,6 +16,7 @@ class Pelayanan_Category(Base) :
     __tablename__ = "pelayanan_category"
     id = Column(String,primary_key=True)
     name = Column(String)
+    price = Column(Integer,nullable=False)
 
     detail_servant = relationship("Detail_Servant",back_populates="pelayanan")
 

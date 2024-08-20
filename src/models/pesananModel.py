@@ -24,7 +24,7 @@ class Pesanan(Base) :
     order_estimate = Column(String,nullable=False)
     status = Column(Enum(Status_Pesanan_Enum),nullable=False)
     tugas = Column(String,nullable=False)
-    total_price = Column(Integer,nullable=False)
+    price = Column(Integer,nullable=False)
     price_outside = Column(Integer,default=0)
     other_price = Column(Integer,default=0)
     isPay = Column(Boolean,default=False)

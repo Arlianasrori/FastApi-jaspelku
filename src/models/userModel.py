@@ -48,13 +48,8 @@ class Location_Now(Base) :
     __tablename__ = "location_now"
 
     id_user = Column(String,ForeignKey("user.id",ondelete="CASCADE"),primary_key=True,nullable=False)
-    village = Column(String)
-    subdistrick = Column(String)
-    regency = Column(String)
-    province = Column(String)
-    country = Column(String)
-    latitude = Column(String,nullable=True)
-    longitude = Column(String,nullable=True)
+    latitude = Column(String,nullable=False)
+    longitude = Column(String,nullable=False)
 
     user = relationship("User",back_populates="location_now")
 

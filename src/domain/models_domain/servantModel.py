@@ -4,10 +4,12 @@ from ...models.servantModel import DayEnum
 from .pesananOrderModel import PesananBase,OrderBase,PesananVendee
 from ...utils.BaseModelWithPhone import BaseModelWithPhoneValidation
 from .userModel import AlamatBase
+from .vendeeModel import DetailVendeeBase
 
 class PelayananServantBase(BaseModel) :
     id : str
     name : str
+    price : int
 
 class TujuanServant(BaseModel) :
     id : str
@@ -48,6 +50,7 @@ class MoreDetailServant(DetailServantBase) :
     rating : int
     pesanans : list[PesananServant] = []
     orders : list[OrderServant] = []
+
 class DetailServantWithoutRatingPesananOrder(DetailServantBase) :
     tujuan_servant : TujuanServant | None = None
     jadwal_pelayanan : list[JadwalPelayananServant] = []
@@ -59,6 +62,7 @@ class ServantBase(BaseModelWithPhoneValidation) :
     email : EmailStr
     no_telepon : str
     foto_profile : Union[str,None]
+    saldo : int
     isVerify : bool
     servant : DetailServantBase 
     alamat : AlamatBase | None = None
@@ -77,6 +81,7 @@ class ServantWithOutDetail(BaseModelWithPhoneValidation) :
     username : str
     email : EmailStr
     no_telepon : str
+    saldo : int
     foto_profile : Union[str,None]
     isVerify : bool
     alamat : AlamatBase | None = None
@@ -96,6 +101,18 @@ class ServantWithOutAlamat(BaseModelWithPhoneValidation) :
     username : str
     email : EmailStr
     no_telepon : str
+    saldo : int
     foto_profile : Union[str,None]
     isVerify : bool
     servant : DetailServantWithOutPelayanan
+
+class RatingServant(BaseModel) :
+    id : str
+    rating : int
+    isi : str
+    detail_vendee : DetailVendeeBase
+
+class DetailServantWithRating(BaseModel) :
+    id : str
+    deskripsi : str
+    ratings : list[RatingServant]

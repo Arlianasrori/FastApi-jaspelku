@@ -7,6 +7,7 @@ from ...models_domain.servantModel import ServantBase
 # pelayanan servant
 class AddPelayananServantCategory(BaseModel) :
     name : str
+    price : int
 
 class UpdatePelayananServantCategory(BaseModel) :
     name : str
@@ -14,6 +15,7 @@ class UpdatePelayananServantCategory(BaseModel) :
 class ResponsePelayananServantCategory(BaseModel) :
     id : str 
     name : str
+    price : int
 
 
 # add

@@ -10,6 +10,12 @@ class HttpException(Exception) :
         self.status = status
         self.messsage = message
 
+class SocketException(Exception) :
+    def __init__(self, status : int,message : str,type : str) -> None:
+        self.status = status
+        self.messsage = message
+        self.type = type
+
 def add_exception_server(App : FastAPI) :
     @App.exception_handler(HttpException)
     async def handlingHttpException(request: Request, exc: HttpException):

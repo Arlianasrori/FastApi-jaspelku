@@ -20,6 +20,7 @@ psycopg2 = "^2.9.9"
 bcrypt = "^4.2.0"
 google-auth = "^2.33.0"
 requests = "^2.32.3"
+python-socketio = "^5.11.3"
 
 
 [build-system]

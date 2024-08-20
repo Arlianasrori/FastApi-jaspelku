@@ -7,7 +7,7 @@ class UserBase(BaseModelWithPhoneValidation) :
     username : str
     email : EmailStr
     no_telepon : str
-    foto_profile : Union[str | None] = None
+    foto_profile : Union[str ,None] = None
     saldo : int
 
 class AlamatBase(BaseModel) :
@@ -16,5 +16,14 @@ class AlamatBase(BaseModel) :
     regency : str
     province : str
     country : str
-    latitude : Union[str | None] = None
-    longitude : Union[str | None] = None
+    latitude : Union[str , None] = None
+    longitude : Union[str , None] = None
+
+class UpdateAlamat(BaseModel) :
+    village : str | None = None
+    subdistrick : str | None = None
+    regency : str | None = None
+    province : str | None = None
+    country : str | None = None
+    latitude : str | None = None
+    longitude : str | None = None

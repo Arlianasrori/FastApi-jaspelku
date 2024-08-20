@@ -9,7 +9,7 @@ import os
 
 SECRET_KEY = os.getenv("ADMIN_SECRET_ACCESS_TOKEN")
 
-async def adminCookieAuth(access_token : str | None = Cookie("access_token"),req : Request = None,Session : sessionDepedency = None) :
+async def adminCookieAuth(access_token : str | None = Cookie(None),req : Request = None,Session : sessionDepedency = None) :
     print(access_token)
     if not access_token :
         raise HttpException(status=401,message="invalid token(unauthorized)")

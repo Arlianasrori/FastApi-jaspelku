@@ -8,7 +8,7 @@ import os
 
 SECRET_KEY = os.getenv("ADMIN_SECRET_REFRESH_TOKEN")
 
-def refresh_token_auth(refresh_token : str | None = Cookie("refresh_token"),req : Request = None,Session : sessionDepedency = None) :
+def refresh_token_auth(refresh_token : str | None = Cookie(None),req : Request = None,Session : sessionDepedency = None) :
     print(refresh_token)
     if not refresh_token :
         raise HttpException(status=401,message="invalid token(unauthorized)")

@@ -29,6 +29,7 @@ async def updateProfile(update_servant : UpdateProfileServant,user : dict = Depe
 
 @servantRouter.get("/profile",response_model=ResponseModel[ResponseProfilServant],tags=["SERVANT/PROFILE"])
 async def getProfileServant(user : dict = Depends(GetUserDepends),session : sessionDepedency = None) :
+    print("tes")
     return await servantService.getProfilServant(user["id"],session)
 
 @servantRouter.get("/detailProfile",response_model=ResponseModel[ResponseDetailProfileServant],tags=["SERVANT/PROFILE"])
@@ -83,19 +84,19 @@ async def updateReadyOrder(readyOrder : bool,user : dict = Depends(GetUserDepend
 async def addUpdateLocationNow(location_data : AddUpdateLocationNowBody,user : dict = Depends(GetUserDepends),session : sessionDepedency = None) :
     return await servantService.addUpdateLocationNow(user["id"],location_data,session)
 
-# socket
-session = SessionLocal()
-# location now
-@sio.on("share_servant_location")
-async def receive_location(sid, data):
-    try :
-        print("Msg receive from " + str(sid))
-        updateAddLocation = await servantService.addUpdateLocationNow(data["id_user"],data["location"],session)
-        await sio.emit("share_servant_location",updateAddLocation)   
-    except SocketException as err:
-        await socketError(err.status,err.messsage,err.type,sid)
-    except ValidationError as err :
-        await socketError(400,err.errors()[0]["msg"],"share_location",sid)
-    except Exception as err :
-        await socketError(500,"internal server error","server",sid)
+# # socket
+# session = SessionLocal()
+# # location now
+# @sio.on("share_servant_location")
+# async def receive_location(sid, data):
+#     try :
+#         print("Msg receive from " + str(sid))
+#         updateAddLocation = await servantService.addUpdateLocationNow(data["id_user"],data["location"],session)
+#         await sio.emit("share_servant_location",updateAddLocation)   
+#     except SocketException as err:
+#         await socketError(err.status,err.messsage,err.type,sid)
+#     except ValidationError as err :
+#         await socketError(400,err.errors()[0]["msg"],"share_location",sid)
+#     except Exception as err :
+#         await socketError(500,"internal server error","server",sid)
 

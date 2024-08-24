@@ -19,7 +19,7 @@ class UpdatePassword(BaseModel):
             raise ValueError("password tidak bisa mengandung spasi")
         return v
 
-class ResponsePassword(BaseModel):
+class ResponsePasswordEmail(BaseModel):
     msg: str
 
 class UpdateEmail(BaseModel):

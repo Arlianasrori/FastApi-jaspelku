@@ -1,4 +1,4 @@
-from pydantic import BaseModel,EmailStr, Field, field_validator
+from pydantic import BaseModel,EmailStr, field_validator
 from typing import Union
 from ...models.servantModel import DayEnum
 from .pesananOrderModel import PesananBase,OrderBase,PesananVendee

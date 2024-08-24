@@ -1,4 +1,3 @@
-from fastapi import WebSocketException
 from copy import deepcopy
 from sqlalchemy import select,and_,func
 from sqlalchemy.orm import joinedload
@@ -7,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .servantModel import AddDetailServant,ResponseAddUpdateDetailServant, ResponseDetailProfileServant,ResponseProfilServant,ResponseGetServant,UpdateProfileServant,ResponseRatingsServant,ResponseGetRatingById,ResponseGetPesanans,ResponseGetPesananBYId,AddUpdateLocationNowBody,ResponseAddUpdateLocationNow
 from ..models_domain.servantModel import ServantBase,ServantWithOutAlamat
 
-from ...error.errorHandling import HttpException,SocketException
+from ...error.errorHandling import HttpException
 
 from ...models.servantModel import Detail_Servant,Pelayanan_Category,Tujuan_Servant_Category,Time_Servant,Jadwal_Pelayanan,Tujuan_Servant
 from ...models.userModel import User,Alamat_User,Location_Now
@@ -15,10 +14,14 @@ from ...models.pesananModel import Pesanan,Status_Pesanan_Enum
 from ...models.ratingModel import Rating
 from ...models.vendeeModel import Detail_Vendee
 
+# from ...socket.socketSendNotification import sendNotification
+# from ..models_domain.notifikasiModel import NotifikasiBase,AddNotifikasiBody
+
 from python_random_strings import random_strings
 
 from ...utils.updateTable import updateTable
 
+# from ...socket.socketSendNotification import sendNotification
 
 # profile and detail
 async def addDetailServant(id_user : str, detail_servant : AddDetailServant,session : AsyncSession) -> ResponseAddUpdateDetailServant :
@@ -79,13 +82,17 @@ async def addDetailServant(id_user : str, detail_servant : AddDetailServant,sess
     }
 
 async def getProfilServant(id_user : str,session : AsyncSession) -> ResponseProfilServant :
+    print("masuk")
     moreDetailServantQueryOption = joinedload(User.servant).options(joinedload(Detail_Servant.pelayanan),joinedload(Detail_Servant.tujuan_servant).options(joinedload(Tujuan_Servant.tujuan_servant_category)),joinedload(Detail_Servant.jadwal_pelayanan),joinedload(Detail_Servant.time_servant))
     statementGetServant = await session.execute(select(User).options(joinedload(User.alamat),moreDetailServantQueryOption).where(User.id == id_user))
     findDetailServant = statementGetServant.scalars().first()
 
+    # data = AddNotifikasiBody(id_user = id_user,notifikasi_category_id = "info",title = "test",isi = "test")
+    # detailServantCopy = deepcopy(findDetailServant)
+    # await sendNotification(id_user,data,session)
     if not findDetailServant : 
         raise HttpException(404,"servant tidak ditemukan")
-    
+
     return {
         "msg" : "success",
         "data" : findDetailServant
@@ -331,11 +338,11 @@ async def updateReadyOrder(isReady : bool,id_user : str,session : AsyncSession) 
 
 
 # location now
-async def addUpdateLocationNow(id_user : str,location : dict,session : AsyncSession) -> ResponseAddUpdateLocationNow :
+async def addUpdateLocationNow(id_user : str,location : AddUpdateLocationNowBody,session : AsyncSession) -> ResponseAddUpdateLocationNow :
     getUser = (await session.execute(select(User).options(joinedload(User.location_now)).where(User.id == id_user))).scalars().first()
 
     if not getUser :
-        raise WebSocketException(404,"user tidak ditemukan")
+        raise HttpException(404,"user tidak ditemukan")
     
     if getUser.location_now :
         updateTable(location,getUser.location_now)

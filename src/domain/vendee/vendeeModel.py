@@ -114,3 +114,14 @@ class ResponseAddUpdateRating(BaseModel) :
     id_detail_vendee : str
     rating : int = Field(gt=0,le=5)
     isi : str
+
+
+# location now 
+class AddUpdateLocationNowBody(BaseModel) :
+    latitude : str
+    longitude : str
+
+class ResponseAddUpdateLocationNow(BaseModel) :
+    id_user : str
+    latitude : str
+    longitude : str

@@ -3,16 +3,16 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload,subqueryload
 
 from ...models.vendeeModel import Detail_Vendee,Tujuan_Vendee_Category,Tujuan_Vendee
-from ...models.userModel import User,Alamat_User
+from ...models.userModel import User,Alamat_User,Location_Now
 from ...models.servantModel import Detail_Servant, Jadwal_Pelayanan, Pelayanan_Category, Time_Servant 
 from ...models.ratingModel import Rating
 from ...models.pesananModel import Pesanan,Status_Pesanan_Enum
 
-from ...error.errorHandling import HttpException
+from ...error.errorHandling import HttpException,SocketException
 
 from ..models_domain.vendeeModel import VendeeBase
 
-from .vendeeModel import AddDetailVendeeBody,UpdateDetailVendeeBody,ResponseAddUpdateDetailVendee,ResponseFilterServant,SearchServantQuery,ResponseDetailProfileServant,ResponseRatingsServant,ResponseGetRatingById,ResponseGetPesanans,ResponseGetPesananBYId,AddPesananBody,ResponseAddUpdatePesanan,AddRatingBody,ResponseAddUpdateRating,UpdateRatingBody
+from .vendeeModel import AddDetailVendeeBody,UpdateDetailVendeeBody,ResponseAddUpdateDetailVendee,ResponseFilterServant,SearchServantQuery,ResponseDetailProfileServant,ResponseRatingsServant,ResponseGetRatingById,ResponseGetPesanans,ResponseGetPesananBYId,AddPesananBody,ResponseAddUpdatePesanan,AddRatingBody,ResponseAddUpdateRating,UpdateRatingBody,AddUpdateLocationNowBody,ResponseAddUpdateLocationNow
 
 from python_random_strings import random_strings
 
@@ -377,3 +377,26 @@ async def updateRating(id_user : str,id_rating : str,rating : UpdateRatingBody,s
         "msg" : "success",
         "data" : getRating
     }
+
+# location now
+async def addUpdateLocationNow(id_user : str,location : AddUpdateLocationNowBody,session : AsyncSession) -> ResponseAddUpdateLocationNow :
+    getUser = (await session.execute(select(User).options(joinedload(User.location_now)).where(User.id == id_user))).scalars().first()
+
+    if not getUser :
+        raise SocketException(404,"user tidak ditemukan","location now")
+    
+    if getUser.location_now :
+        updateTable(location,getUser.location_now)
+    else :
+        locationMapping = location.model_dump()
+        locationMapping.update({"id_user" : id_user})
+        session.add(Location_Now(**locationMapping))
+
+    locationCopy = deepcopy(getUser.location_now.__dict__)
+    await session.commit()
+
+    return {
+            "id_user" : id_user,
+            "latitude" : locationCopy["latitude"],
+            "longitude" : locationCopy["longitude"]
+        }

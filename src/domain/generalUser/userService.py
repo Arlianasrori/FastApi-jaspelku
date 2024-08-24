@@ -1,10 +1,13 @@
 from fastapi import UploadFile
-from sqlalchemy import select
-from sqlalchemy.orm import joinedload
+from sqlalchemy import select,and_
+from sqlalchemy.orm import joinedload,subqueryload
+
+from ...models.notifikasiModel import Notifikasi,Notifikasi_Read
 from ...models.userModel import User, OTPVerifyUser
-from .userModel import ResponseEmail, ResponseUpdateIsOnline
+from .userModel import ResponseEmail, ResponseUpdateIsOnline,ResponseUpdateFotoProfile,ResponsePasswordEmail
+from ..models_domain.notifikasiModel import NotifikasiwithUserRead,NotifikasiWithUser
 from ...error.errorHandling import HttpException
-from ...utils.sessionDepedency import sessionDepedency
+from sqlalchemy.ext.asyncio import AsyncSession
 from python_random_strings import random_strings
 import os
 import datetime
@@ -17,7 +20,7 @@ from copy import deepcopy
 FOTO_PROFILE_PUBLIC_IMAGE = os.getenv("DEV_FOTO_PROFILE_IMAGE_STORE")
 FOTO_PROFILE_BASE_URL = os.getenv("DEV_FOTO_PROFILE_IMAGE_BASE_URL")
 
-async def update_foto_profile(user, foto_profile: UploadFile, session: sessionDepedency):
+async def update_foto_profile(user, foto_profile: UploadFile, session: AsyncSession) -> ResponseUpdateFotoProfile:
     statement_get_user = await session.execute(select(User).where(User.id == user["id"]))
     get_user = statement_get_user.scalars().first()
     if not get_user:
@@ -45,7 +48,7 @@ async def update_foto_profile(user, foto_profile: UploadFile, session: sessionDe
         "data": user_current_dict
     }
 
-async def send_otp_for_password(user, session: sessionDepedency):
+async def send_otp_for_password(user, session: AsyncSession) -> ResponsePasswordEmail:
     statement_get_user = await session.execute(select(User).options(joinedload(User.OTP)).where(User.id == user["id"]))
     get_user = statement_get_user.scalars().first()
 
@@ -76,7 +79,7 @@ async def send_otp_for_password(user, session: sessionDepedency):
         "msg": "kode OTP sukses dikirim,silahkan cek email anda untuk melakukan verifikasi sebelum mengganti password"
     }
 
-async def verify_otp_for_password_email(otp, user, session: sessionDepedency):
+async def verify_otp_for_password_email(otp, user, session: AsyncSession) -> ResponsePasswordEmail:
     id_user = user["id"]
     statement_get_user = await session.execute(select(User).options(joinedload(User.OTP)).where(User.id == id_user))
     get_user = statement_get_user.scalars().first()
@@ -95,7 +98,7 @@ async def verify_otp_for_password_email(otp, user, session: sessionDepedency):
     else:
         raise HttpException(400, "invalid OTP")
 
-async def update_password(password, user, session: sessionDepedency):
+async def update_password(password, user, session: AsyncSession) -> ResponsePasswordEmail:
     statement_get_user = await session.execute(select(User).where(User.id == user["id"]))
     get_user = statement_get_user.scalars().first()
 
@@ -110,7 +113,7 @@ async def update_password(password, user, session: sessionDepedency):
         "msg": "update password success"
     }
 
-async def send_otp_for_email(user, session: sessionDepedency):
+async def send_otp_for_email(user, session: AsyncSession) -> ResponsePasswordEmail:
     statement_get_user = await session.execute(select(User).options(joinedload(User.OTP)).where(User.id == user["id"]))
     get_user = statement_get_user.scalars().first()
 
@@ -141,7 +144,7 @@ async def send_otp_for_email(user, session: sessionDepedency):
         "msg": "kode OTP sukses dikirim,silahkan cek email anda untuk melakukan verifikasi sebelum mengganti email anda"
     }
 
-async def send_otp_for_new_email(email, user, session: sessionDepedency):
+async def send_otp_for_new_email(email, user, session: AsyncSession) -> ResponsePasswordEmail:
     statement_get_user = await session.execute(select(User).options(joinedload(User.OTP)).where(User.id == user["id"]))
     get_user = statement_get_user.scalars().first()
 
@@ -177,7 +180,7 @@ async def send_otp_for_new_email(email, user, session: sessionDepedency):
         "msg": "kode OTP sukses dikirim,silahkan cek email anda untuk melakukan verifikasi sebelum mengganti email anda"
     }
 
-async def update_email(email, user, session: sessionDepedency):
+async def update_email(email, user, session: AsyncSession) -> ResponseEmail:
     statement_get_user = await session.execute(select(User).where(User.id == user["id"]))
     get_user = statement_get_user.scalars().first()
 
@@ -193,7 +196,7 @@ async def update_email(email, user, session: sessionDepedency):
         "data": get_user_copy
     }
 
-async def updateIsOnlineUser(user_id: int, is_online: bool, session: sessionDepedency) -> ResponseUpdateIsOnline :
+async def updateIsOnlineUser(user_id: int, is_online: bool, session: AsyncSession) -> ResponseUpdateIsOnline :
     statement_get_user = await session.execute(select(User).where(User.id == user_id))
     get_user = statement_get_user.scalars().first()
 
@@ -209,4 +212,54 @@ async def updateIsOnlineUser(user_id: int, is_online: bool, session: sessionDepe
             "user_id": user_id,
             "isOnline": is_online
         }
+    }
+
+
+async def getAllNotifikasi(user_id : str,session : AsyncSession) -> NotifikasiwithUserRead :
+    getNotifikasi = (await session.execute(select(Notifikasi).options(joinedload(Notifikasi.user),subqueryload(Notifikasi.notifikasi_read.and_(Notifikasi_Read.id_user == user_id))).where(Notifikasi.id_user == user_id))).scalars().all()
+
+    return {
+        "msg" : "success",
+        "data" : getNotifikasi
+    }
+
+async def getNotifikasiById(user_id : str,id_notifikasi : str,session : AsyncSession) -> NotifikasiWithUser :
+    getNotifikasi = (await session.execute(select(Notifikasi).options(joinedload(Notifikasi.user)).where(and_(Notifikasi.id_user == user_id,Notifikasi.id == id_notifikasi)))).scalars().first()
+
+    if not getNotifikasi :
+        raise HttpException(404,"notifikasi tidak ditemukan")
+    
+    return {
+        "msg" : "success",
+        "data" : getNotifikasi
+    }
+
+async def readNotifikasi(user_id : str,id_notifikasi : str,session : AsyncSession) -> NotifikasiWithUser :
+    getUser = (await session.execute(select(User).where(User.id == user_id))).scalars().first()
+
+    if not getUser :
+        raise HttpException(404,"user tidak ditemukan")
+    
+    getNotifikasi = (await session.execute(select(Notifikasi).options(subqueryload(Notifikasi.notifikasi_read.and_(Notifikasi_Read.id_user == user_id))).where(Notifikasi.id == id_notifikasi))).scalars().first()
+
+    if not getNotifikasi :
+        raise HttpException(404,"notifikasi tidak ditemukan")
+    
+    if getNotifikasi.notifikasi_read :
+        raise HttpException(400,"notifikasi sudah dibaca")
+    
+    notifikasi_read_payload = {
+        "id" : str(random_strings.random_digits(6)),
+        "id_user" : user_id,
+        "id_notifikasi" : id_notifikasi,
+        "isRead" : True
+    }
+
+    session.add(Notifikasi_Read(**notifikasi_read_payload))
+    notifikasi_copy = deepcopy(getNotifikasi)
+    await session.commit()
+
+    return {
+        "msg" : "notifikasi success dibaca",
+        "data" : notifikasi_copy
     }

@@ -1,15 +1,24 @@
 from fastapi import APIRouter,Depends
+from pydantic_core._pydantic_core import ValidationError
 from ..auth.dependAuthMiddleware.userAuthDepends import userAuthDepends
 from ..auth.dependAuthMiddleware.getUserDepends import GetUserDepends
 from ..auth.dependAuthMiddleware.vendeeAuth import vendeeAuthDepends
 from ..utils.sessionDepedency import sessionDepedency
 from ..models.responseModel import ResponseModel
 from ..models.pesananModel import Status_Pesanan_Enum
+from ..error.errorHandling import SocketException
+from ..db.database import SessionLocal
 
 from ..domain.models_domain.vendeeModel import VendeeBase
 
-from ..domain.vendee.vendeeModel import AddDetailVendeeBody,UpdateDetailVendeeBody,ResponseAddUpdateDetailVendee,SearchServantQuery,ResponseFilterServant,ResponseDetailProfileServant,ResponseRatingsServant,ResponseGetRatingById,ResponseGetPesanans,ResponseGetPesananBYId,ResponseAddUpdatePesanan,AddPesananBody,AddRatingBody,UpdateRatingBody,ResponseAddUpdateRating
+from ..domain.vendee.vendeeModel import AddDetailVendeeBody, AddUpdateLocationNowBody, ResponseAddUpdateLocationNow,UpdateDetailVendeeBody,ResponseAddUpdateDetailVendee,SearchServantQuery,ResponseFilterServant,ResponseDetailProfileServant,ResponseRatingsServant,ResponseGetRatingById,ResponseGetPesanans,ResponseGetPesananBYId,ResponseAddUpdatePesanan,AddPesananBody,AddRatingBody,UpdateRatingBody,ResponseAddUpdateRating
 from ..domain.vendee import vendeeService
+
+
+# socket
+from ..socket.socket import sio,online_users
+from ..socket.socket_auth_middleware import auth_middleware
+from ..socket.socketErrorHandling import socketError
 
 vendeeRouter = APIRouter(prefix="/vendee",dependencies=[Depends(userAuthDepends),Depends(vendeeAuthDepends)])
 
@@ -77,3 +86,43 @@ async def addPesanan(rating : AddRatingBody,user : dict = Depends(GetUserDepends
 @vendeeRouter.patch("/rating/{id_rating}",response_model=ResponseModel[ResponseAddUpdateRating],tags=["VENDEE/RATING"])
 async def addPesanan(id_rating : str,rating : UpdateRatingBody,user : dict = Depends(GetUserDepends),session : sessionDepedency = None) :
     return await vendeeService.updateRating(user["id"],id_rating,rating,session)
+
+# location now
+@sio.on("share_vendee_location") 
+async def share_vendee_location(sid,data) :
+    try :
+        # check data 
+        if type(data) != dict :
+            raise SocketException(400,"data required or object type","location now")
+        
+        session = SessionLocal()
+        auth = await auth_middleware(data.get("auth"))
+   
+        if not auth :
+            raise SocketException(401,"Unauthorized","Unauthorized")
+        print("Msg receive from " + str(sid))
+
+        
+        # validation location data
+        locationData = data.get("location")
+        if not locationData :
+            raise SocketException(400,"location required","location now")
+        
+        locationAfterValidation = AddUpdateLocationNowBody(**locationData)
+        print(locationAfterValidation)
+        updateAddLocation = await vendeeService.addUpdateLocationNow(auth["id_user"],locationAfterValidation,session)
+        # send data to client
+        await sio.emit("share_vendee_location",updateAddLocation)   
+    
+    # handle error
+    except SocketException as err:
+        await socketError(err.status,err.messsage,err.type,sid)
+    except ValidationError as err :
+        await socketError(400,err.errors()[0]["msg"],"share_location",sid)
+    except Exception as err :
+        print(err)
+        await socketError(500,"internal server error","server",sid)
+    finally :
+        await session.close()
+
+

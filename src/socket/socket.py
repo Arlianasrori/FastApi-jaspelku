@@ -21,18 +21,19 @@ def connetDisconnectSocket() :
     from .socketErrorHandling import socketError
     from ..db.database import SessionLocal
 
+    # handle when client connect to socket
     @sio.on("connect")
     async def connect(sid, environ,auth):
         try :
             # Membuat sesi database baru
             session = SessionLocal()
             # Melakukan autentikasi pengguna
-            auth = await auth_middleware(sid, environ,auth)
+            auth = await auth_middleware(auth)
             if not auth:
                 # Mengembalikan error jika autentikasi gagal
                 return await socketError(401,"Unauthorized","Unauthorized",sid)
 
-            user_id = auth["user_id"]
+            user_id = auth["id_user"]
             print("connect")
             # Menyimpan informasi pengguna yang baru terhubung
             online_users[sid] = {
@@ -50,6 +51,7 @@ def connetDisconnectSocket() :
             # Menutup sesi database
             await session.close()
 
+    # handle when client disconncet to socket
     @sio.on("disconnect")
     async def disconnect(sid):
         try :
@@ -63,6 +65,7 @@ def connetDisconnectSocket() :
                 # Memperbarui status offline pengguna di database
                 await updateIsOnlineUser(user["user_id"], False,session)
                 # Mengirim event bahwa pengguna telah offline
+                print("on disconnect ")
                 await sio.emit('user_offline', {'user_id': user['user_id'],"isOnline" : False})
 
             # Menghentikan heartbeat manager jika tidak ada pengguna online
@@ -72,6 +75,7 @@ def connetDisconnectSocket() :
             # Menutup sesi database
             await session.close()
 
+    # handle when client send heartbeat to socket
     @sio.on("heartbeat")
     async def handle_heartbeat(sid):
         try :

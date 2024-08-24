@@ -1,14 +1,13 @@
 from pydantic import BaseModel,field_validator
-from typing import Union
 from ...models_domain.pesananOrderModel import PesananWithVendeeServant,OrdernWithVendeeServant
 
 class SearchPesananOrder(BaseModel) :
-    servant : Union[str | None] = None
-    vendee : Union[str | None] = None
-    tugas : Union[str | None] = None
-    year : Union[int | None] = None
-    month : Union[int | None] = None
-    day : Union[int | None] = None
+    servant : str | None = None
+    vendee : str | None = None
+    tugas : str | None = None
+    year : int | None = None
+    month : int | None = None
+    day : int | None = None
 
 class StatisticPesanan(BaseModel) :
     total_pesanan : int

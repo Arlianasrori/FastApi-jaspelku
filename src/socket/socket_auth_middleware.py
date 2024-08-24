@@ -6,10 +6,12 @@ from ..db.database import SessionLocal
 
 SECRET_KEY = os.getenv("USER_SECRET_ACCESS_TOKEN")
 
-async def auth_middleware(sid, environ,auth = {}):
+async def auth_middleware(auth):
     session = SessionLocal()
+    if not auth or type(auth) != dict:
+        return False
     try:
-        auth_header = auth.get('access_token')
+        auth_header = auth['access_token']
         if not auth_header:
             return False
         
@@ -34,7 +36,7 @@ async def auth_middleware(sid, environ,auth = {}):
                 return False
             
             return {
-                "user_id" : user_id,
+                "id_user" : user_id,
             }
         except JWTError:
             return False

@@ -14,6 +14,7 @@ class Notifikasi(Base) :
     __tablename__ = "notifikasi"
 
     id = Column(String,primary_key=True,nullable=False)
+    title = Column(String,nullable=False)
     id_user = Column(String,ForeignKey("user.id",ondelete="CASCADE"),nullable=True)
     notifikasi_category_id = Column(Enum(NotifikasiCategory_Enum),nullable=False)
     isi = Column(String,nullable=False)
@@ -28,7 +29,7 @@ class Notifikasi_Read(Base) :
     __tablename__ = "notifikasi_read"
 
     id = Column(String,primary_key=True,nullable=False)
-    id_user = Column(String,ForeignKey("user.id"),nullable=False)
+    id_user = Column(String,ForeignKey("user.id",ondelete="CASCADE"),nullable=False)
     id_notifikasi = Column(String,ForeignKey("notifikasi.id",ondelete="CASCADE"),nullable=False)
     isRead = Column(Boolean,default=True)
 

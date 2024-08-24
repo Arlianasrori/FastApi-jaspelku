@@ -13,8 +13,17 @@ from src.routes.adminRouter import adminRouter
 from src.routes.servantRouter import servantRouter
 from src.routes.vendeeRouter import vendeeRouter
 from src.routes.userRouter import userRouter
+from contextlib import asynccontextmanager
 
-App = FastAPI(title="API SPEC FOR JASPELKU PROJECT",description="This is the api spec for jaspelku, it can be your guide in consuming the api. Please pay attention to the required fields in the api spec ini",servers=[{"url": "http://localhost:2008","description" : "development server"}],contact={"name" : "Habil Arlian Asrori","email" : "arlianasrori@gmail.com"})
+# handle fastApi on event
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Kode inisialisasi (jika ada)
+    yield
+    # Kode pembersihan
+    await cleanup()
+
+App = FastAPI(title="API SPEC FOR JASPELKU PROJECT",description="This is the api spec for jaspelku, it can be your guide in consuming the api. Please pay attention to the required fields in the api spec ini",servers=[{"url": "http://localhost:2008","description" : "development server"}],contact={"name" : "Habil Arlian Asrori","email" : "arlianasrori@gmail.com"},lifespan=lifespan)
 
 
 routes = [authRouter,adminRouter,servantRouter,vendeeRouter,userRouter]
@@ -39,9 +48,6 @@ App.mount("/",app=socket_app)
 add_exception_server(App)
 connetDisconnectSocket()
 
-@App.on_event("shutdown")
-async def shutdown_event():
-    await cleanup()
 async def runServer() :
     uvicorn.run(app="main:App",port=2008,reload=True)
 

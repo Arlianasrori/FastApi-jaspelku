@@ -37,8 +37,8 @@ class AddAlamat(BaseModel) :
     regency : str
     province : str
     country : str
-    latitude : Union[str | None] = None
-    longitude : Union[str | None] = None
+    latitude : str | None = None
+    longitude : str | None = None
 
 class AddTujuanServantCategory(BaseModel) :
     id_tujuan_user_category : str
@@ -50,23 +50,23 @@ class UpdateTujuanServantCategory(BaseModel) :
 
 # update
 class UpdateDetailservant(BaseModel) : 
-    deskripsi : Union[str | None] = None
-    id_pelayanan : Union[str | None] = None
+    deskripsi : str | None = None
+    id_pelayanan : str | None = None
 
 class UpdateServant(BaseModelWithPhoneValidation) :
-    username : Union[str | None] = None
-    email : Union[EmailStr | None] = None
+    username : str | None = None
+    email : EmailStr | None = None
     no_telepon : str = None
-    password : Union[str | None] = None
+    password : str | None = None
 
 class UpdateAlamat(BaseModel) :
-    village : Union[str | None] = None
-    subdistrick : Union[str | None] = None
-    regency : Union[str | None] = None
-    province : Union[str | None] = None
-    country : Union[str | None] = None
-    latitude : Union[str | None] = None
-    longitude : Union[str | None] = None
+    village : str | None = None
+    subdistrick : str | None = None
+    regency : str | None = None
+    province : str | None = None
+    country : str | None = None
+    latitude : str | None = None
+    longitude : str | None = None
 
 # search
 class SearchServant(BaseModel) :

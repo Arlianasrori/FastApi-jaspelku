@@ -6,7 +6,7 @@ session = SessionLocal()
 
 class HeartbeatManager:
     # Interval waktu (dalam detik) antara setiap pemeriksaan heartbeat
-    HEARTBEAT_INTERVAL = 5
+    HEARTBEAT_INTERVAL = 25
     # Batas waktu (dalam detik) sebelum pengguna dianggap offline jika tidak ada heartbeat
     HEARTBEAT_TIMEOUT = 10
 

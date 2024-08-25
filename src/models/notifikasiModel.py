@@ -19,7 +19,7 @@ class Notifikasi(Base) :
     notifikasi_category_id = Column(Enum(NotifikasiCategory_Enum),nullable=False)
     isi = Column(String,nullable=False)
     id_pesanan = Column(String,ForeignKey("pesanan.id",ondelete="CASCADE"),nullable=True)
-    datetime = Column(DateTime,default=datetime.datetime.now())
+    datetime = Column(DateTime,default=datetime.datetime.utcnow(),nullable=True)
 
     user = relationship("User",back_populates="notifikasi")
     pesanan = relationship("Pesanan",back_populates="notifikasi")

@@ -101,10 +101,11 @@ async def searchStatisticPesanan(search : SearchPesananOrder,session : AsyncSess
     whereQuery = await getWhereQueryPesanan(search,TypeWhereQueryEnum.pesanan)
 
     statementGetStatisticPesanan = await session.execute(select(func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.selesai).label("jumlah_pesanan_selesai"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.pengajuan).label("jumlah_pesanan_pengajuan"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.proses).label("jumlah_pesanan_proses"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.dibatalkan_servant).label("jumlah_pesanan_dibatalkan_servant"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.dibatalkan_vendee).label("jumlah_pesanan_dibatalkan_vendee"),func.count(Pesanan.id).label("total_pesanan"),
-    func.sum(Pesanan.total_price).filter(Pesanan.status == Status_Pesanan_Enum.selesai).label("total_pendapatan_from_pesanan"))
+    func.sum(Pesanan.price).filter(Pesanan.status == Status_Pesanan_Enum.selesai).label("total_pendapatan_from_pesanan"))
     .filter(and_(whereQuery["otherQuery"],whereQuery["dateQuery"])))
 
     findAnalisis = statementGetStatisticPesanan.first()
+    print(findAnalisis._asdict())
 
     return {
         "msg" : "success",
@@ -115,7 +116,7 @@ async def getStatisticPesananToday(session : AsyncSession) -> StatisticPesanan :
     today = datetime.datetime.today().date()
 
     statementGetStatisticPesanan = await session.execute(select(func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.selesai).label("jumlah_pesanan_selesai"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.pengajuan).label("jumlah_pesanan_pengajuan"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.proses).label("jumlah_pesanan_proses"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.dibatalkan_servant).label("jumlah_pesanan_dibatalkan_servant"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.dibatalkan_vendee).label("jumlah_pesanan_dibatalkan_vendee"),func.count(Pesanan.id).label("total_pesanan"),
-    func.sum(Pesanan.total_price).filter(Pesanan.status == Status_Pesanan_Enum.selesai).label("total_pendapatan_from_pesanan")).filter(Pesanan.date == today))
+    func.sum(Pesanan.price).filter(Pesanan.status == Status_Pesanan_Enum.selesai).label("total_pendapatan_from_pesanan")).filter(Pesanan.date == today))
 
     getStatistic = statementGetStatisticPesanan.first()._asdict()
 
@@ -143,7 +144,7 @@ async def getOverviewPesananByYear(year : int,session : AsyncSession) -> Respons
     yearEnd = datetime.date(year if year else todayYear,12,31)
 
     statementGetStatisticPesanan = await session.execute(select(func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.selesai).label("jumlah_pesanan_selesai"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.pengajuan).label("jumlah_pesanan_pengajuan"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.proses).label("jumlah_pesanan_proses"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.dibatalkan_servant).label("jumlah_pesanan_dibatalkan_servant"),func.count(Pesanan.id).filter(Pesanan.status == Status_Pesanan_Enum.dibatalkan_vendee).label("jumlah_pesanan_dibatalkan_vendee"),func.count(Pesanan.id).label("total_pesanan"),
-    func.sum(Pesanan.total_price).filter(Pesanan.status == Status_Pesanan_Enum.selesai).label("total_pendapatan_from_pesanan"),
+    func.sum(Pesanan.price).filter(Pesanan.status == Status_Pesanan_Enum.selesai).label("total_pendapatan_from_pesanan"),
     Pesanan.date).filter(and_(Pesanan.date >= yearStart,Pesanan.date <= yearEnd)).group_by(Pesanan.date))
 
     allPesanan = statementGetStatisticPesanan.all()
@@ -221,6 +222,7 @@ async def searchstatisticOrder(search : SearchPesananOrder,session : AsyncSessio
     ,func.count(Order.id).filter(Order.payment_using == "bni").label("jumlah_order_bni")).filter(and_(whereQuery["otherQuery"],whereQuery["dateQuery"])))
 
     allIOrder = statementGetOrder.first()
+    print(allIOrder._asdict())
 
     # proses guys
     return {

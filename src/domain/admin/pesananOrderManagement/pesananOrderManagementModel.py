@@ -25,7 +25,11 @@ class StatisticPesanan(BaseModel) :
 class StatisticOrder(BaseModel) :
     total_order : int
     jumlah_order_bni : int
-    total_price : int
+    total_price : int 
+
+    @field_validator("total_price",mode="before")
+    def settotal_pendapatan_from_pesanan(cls, v):
+        return v if v else 0
 
 class SearchPesananResponse(BaseModel) :
     pesanans : list[PesananWithVendeeServant]

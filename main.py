@@ -13,8 +13,9 @@ from src.routes.adminRouter import adminRouter
 from src.routes.servantRouter import servantRouter
 from src.routes.vendeeRouter import vendeeRouter
 from src.routes.userRouter import userRouter
+from src.routes.chatRouter import chatRouter
+
 from contextlib import asynccontextmanager
-# import src.
 
 # handle fastApi on event
 @asynccontextmanager
@@ -27,7 +28,7 @@ async def lifespan(app: FastAPI):
 App = FastAPI(title="API SPEC FOR JASPELKU PROJECT",description="This is the api spec for jaspelku, it can be your guide in consuming the api. Please pay attention to the required fields in the api spec ini",servers=[{"url": "http://localhost:2008","description" : "development server"}],contact={"name" : "Habil Arlian Asrori","email" : "arlianasrori@gmail.com"},lifespan=lifespan)
 
 
-routes = [authRouter,adminRouter,servantRouter,vendeeRouter,userRouter]
+routes = [authRouter,adminRouter,servantRouter,vendeeRouter,userRouter,chatRouter]
 for router in routes :
     App.include_router(router)
 

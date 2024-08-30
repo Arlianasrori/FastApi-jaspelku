@@ -2,7 +2,7 @@ from ..db.database import Base
 from sqlalchemy import Column, DateTime,String,Boolean,Enum,ForeignKey,Integer
 from sqlalchemy.orm import relationship
 from enum import Enum as enum
-from .chatModel import Chat
+from .chatModel import Message
 
 class RoleUser(enum) :
     servant = "servant"
@@ -30,8 +30,9 @@ class User(Base) :
     notifikasi = relationship("Notifikasi",back_populates="user",cascade="all")
     notifikasi_read = relationship("Notifikasi_Read",back_populates="user",cascade="all")
     OTP = relationship("OTPVerifyUser",backref="user",uselist=False,cascade="all")
-    chat_sender = relationship("Chat",back_populates="sender",foreign_keys=[Chat.sender_id])
-    chat_receiver = relationship("Chat",back_populates="sender",foreign_keys=[Chat.receiver_id])
+    message_sender = relationship("Message",back_populates="sender",foreign_keys=[Message.sender_id])
+    message_receiver = relationship("Message",back_populates="sender",foreign_keys=[Message.receiver_id])
+    roomUser = relationship("RoomUsers",back_populates="users")
 
 class Alamat_User(Base) :
     __tablename__ = "alamat_user"
